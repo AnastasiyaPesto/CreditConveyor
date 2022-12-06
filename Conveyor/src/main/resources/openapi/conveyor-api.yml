@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info: 
+  title: Credit conveyor
+  description: Calculation of possible loan terms, scoring the borrower and full calculation of loan parameters
+  version: 1.0.0
+  contact: 
+    name: Zentsova Anastasiia
+    email: pestovnikovaanastasiia@gmail.com
+servers:
+  - url: http://localhost:8080/
+    description: Development server
+paths:
+  /conveyor/offers:
+    post:
+      summary: Pre-scoring and calculation of possible loan offers
+      tags: 
+        - Conveyor
+      operationId: getAllPossibleOffers
+      requestBody:
+        required: true
+        content:
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/LoanApplicationRequestDTO"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanOfferDTO"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /conveyor/calculation:
+    post:
+      summary: Scoring  and full calculation loan parameters
+      tags:
+        - Conveyor
+      operationId: getFullCalculatedParameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScoringDataDTO"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditDTO"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components: 
+  schemas:
+    LoanApplicationRequestDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          minimum: 10000.00
+          example: 1700000.00
+        term:
+          type: integer
+          format: int32
+          minimum: 6
+          example: 180
+        firstName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivan
+        lastName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivanov
+        middleName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivanovich
+        email:
+          type: string
+          pattern: (^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$)
+          example: ivanii@google.com
+        birthDate:
+          type: string
+          format: date
+          pattern: (\d{4}-\d{2}-\d{2})
+          example: 1991-01-01
+        passportSeries:
+          type: string
+          pattern: \d{4}
+          example: 8610
+        passportNumber:
+          type: string
+          pattern: \d{6}
+          example: 211009
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - email
+        - birthDate
+        - passportSeries
+        - passportNumber
+
+    LoanOfferDTO:
+      type: object
+      properties:
+        applicationId: 
+          type: integer
+          format: int64
+          example: 1
+        requestedAmount:
+          type: number
+          format: double
+          example: 1700000.00
+        totalAmount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        monthlyPayment:
+          type: number
+          format: double
+          example: 190000
+        rate:
+          type: number
+          format: double
+          example: 10.4
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+
+    ScoringDataDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        firstName:
+          type: string
+          example: Ivan
+        lastName:
+          type: string
+          example: Ivanov
+        middleName:
+          type: string
+          example: Ivanovich
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+            - not binary
+          example: female
+        birthDate:
+          type: string
+          format: date
+          example: 1991-01-01
+        passportSeries:
+          type: string
+          example: 8610
+        passportNumber:
+          type: string
+          example: 211009
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2019-05-31
+        passportIssueBranch:
+          type: string
+          example: МВД по Республике Карелия
+        maritalStatus:
+          type: string
+          enum:
+            - single
+            - married
+            - divorced
+            - widower
+        dependentAmount:
+          type: integer
+          format: int32
+          example: 2
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 40817810099910004312
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+
+    CreditDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        monthlyPayment:
+          type: number
+          format: double
+          example: 190000
+        rate:
+          type: number
+          format: double
+          example: 10.4
+        psk:
+          type: number
+          format: double
+          example: 1715600
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+        paymentSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElement'
+
+    EmploymentDTO:
+      type: object
+      properties:
+        employmentStatus:
+          type: string
+          enum:
+            - employed
+            - unemployed
+            - self-employed
+            - business owner
+          example: employed
+        employerINN:
+          type: string
+          example: 784047367962
+        salary:
+          type: number
+          format: double
+          example: 51000.00
+        position:
+          type: string
+          enum:
+            - top level manager
+            - manager
+            - developer
+            - trainee
+        workExperienceTotal:
+          type: integer
+          format: int32
+          example: 36
+        workExperienceCurrent:
+          type: integer
+          format: int32
+          example: 7
+
+    PaymentScheduleElement:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+          example: 7
+        date:
+          type: string
+          format: date
+          example: 2022-11-15
+        totalPayment:
+          type: number
+          format: double
+          example: 34056.00
+        interestPayment:
+          type: number
+          format: double
+          example: 11000.00
+        debtPayment:
+          type: number
+          format: double
+          example: 23056.00
+        remainingDebt:
+          type: number
+          format: double
+          example: 2985000.00
+
+    Error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+          minimum: 100
+          maximum: 600
