@@ -1,11 +1,4 @@
-package ru.zentsova.conveyor.services;
-
-import org.springframework.stereotype.Service;
-
-/**
- * Class ConveyorService
- */
-@Service
-public class ConveyorService {
-
+package ru.zentsova.conveyor.services;/**
+ * @author anastasia
+ */public class ConveyorService {
 }
