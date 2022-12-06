@@ -37,6 +37,11 @@
 			<artifactId>swagger-annotations</artifactId>
 			<version>2.2.7</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -59,9 +64,22 @@
 							<generatorName>spring</generatorName>
 							<apiPackage>ru.zentsova.conveyor.api</apiPackage>
 							<modelPackage>ru.zentsova.conveyor.model</modelPackage>
-							<inputSpec>${project.basedir}/src/main/resources/openapi/credit-conveyor-api.yml</inputSpec>
+							<typeMappings>
+								<typeMapping>double=java.math.BigDecimal</typeMapping>
+								<typeMapping>date=java.time.LocalDate</typeMapping>
+								<typeMapping>date-time=java.time.LocalDateTime</typeMapping>
+								<typeMapping>Date=LocalDateTime</typeMapping>
+							</typeMappings>
+							<importMappings>
+								<importMapping>java.util.Date=java.time.LocalDateTime</importMapping>
+							</importMappings>
+							<inputSpec>${project.basedir}/src/main/resources/openapi/conveyor-api.yml</inputSpec>
 							<configOptions>
-								<sourceFolder>src/gen/java/main</sourceFolder>
+								<delegatePattern>false</delegatePattern>
+								<interfaceOnly>true</interfaceOnly>
+								<useBeanValidation>true</useBeanValidation>
+								<library>spring-mvc</library>
+								<dateLibrary>java11</dateLibrary>
 								<java11>true</java11>
 							</configOptions>
 						</configuration>
