@@ -22,7 +22,7 @@ public class LoanApplicationRequestDTOValidator {
     private static final String S_LAST_NAME = "lastName";
     private static final String S_MIDDLE_NAME = "middleName";
     private static final String S_TERM = "term";
-    private static final String S_BIRTH_DATE = "birthDate";
+    private static final String S_BIRTH_DATE = "birthdate";
     private static final String S_PASSPORT_SERIES = "passportSeries";
     private static final String S_PASSPORT_NUMBER = "passportNumber";
     private static final String S_EMAIL = "email";
@@ -61,7 +61,7 @@ public class LoanApplicationRequestDTOValidator {
         checkPartOfName(dto.getLastName(), S_LAST_NAME, errorMsg, true);
         checkPartOfName(dto.getMiddleName(), S_MIDDLE_NAME, errorMsg, false);
         checkTerm(dto.getTerm(), errorMsg, true);
-        checkBirthDate(dto.getBirthDate(), errorMsg, true);
+        checkBirthdate(dto.getBirthdate(), errorMsg, true);
         checkEmail(dto.getEmail(), errorMsg, true);
         checkPassportSeries(dto.getPassportSeries(), errorMsg, true);
         checkPassportNumber(dto.getPassportNumber(), errorMsg, true);
@@ -91,10 +91,10 @@ public class LoanApplicationRequestDTOValidator {
             errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, MIN_TERM)).append(S_SEMICOLON);
     }
 
-    private static void checkBirthDate(LocalDate birthDate,StringBuilder errorMsg, Boolean required) {
+    private static void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg, Boolean required) {
         if (required)
-            checkNotNull(birthDate, S_BIRTH_DATE,  errorMsg);
-        if (Objects.nonNull(birthDate) && (Period.between(birthDate, LocalDate.now()).getYears() < MIN_AGE))
+            checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg);
+        if (Objects.nonNull(birthdate) && (Period.between(birthdate, LocalDate.now()).getYears() < MIN_AGE))
             errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, MIN_AGE)).append(S_SEMICOLON);
     }
 

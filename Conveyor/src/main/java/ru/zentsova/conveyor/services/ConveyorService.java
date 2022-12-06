@@ -1,4 +1,8 @@
-package ru.zentsova.conveyor.services;/**
- * @author anastasia
- */public class ConveyorService {
+package ru.zentsova.conveyor.services;
+
+/**
+ * Class ConveyorService
+ */
+public class ConveyorService {
+
 }
