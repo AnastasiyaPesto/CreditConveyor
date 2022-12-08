@@ -1,7 +1,6 @@
 package ru.zentsova.conveyor.util.validator;
 
-import org.springframework.stereotype.Component;
-import ru.zentsova.conveyor.model.LoanApplicationRequestDTO;
+import ru.zentsova.conveyor.model.LoanApplicationRequestDto;
 import ru.zentsova.conveyor.util.exceptions.ApplicationException;
 
 import java.math.BigDecimal;
@@ -13,8 +12,7 @@ import java.util.Objects;
  * Class LoanApplicationRequestDTOValidator
  * Validation input data (pre-scoring)
  */
-@Component
-public class LoanApplicationRequestDTOValidator {
+public class LoanApplicationRequestDtoValidator {
 
     /** Field names */
     private static final String S_AMOUNT = "amount";
@@ -49,11 +47,27 @@ public class LoanApplicationRequestDTOValidator {
     private static final String S_SEMICOLON = "; ";
     private static final String S_SEPARATOR = " - ";
 
+    // TODO
+
     /**
      * Validate (pre-scoring) input loan application request DTO
-     * @param dto             loan application request DTO
+     * @param dto
+     * @param isAmountRequired
+     * @param isFirstNameRequired
+     * @param isLastNameRequired
+     * @param isMiddleNameRequired
+     * @param isTermRequired
+     * @param isBirthdateRequired
+     * @param isEmailRequired
+     * @param isPassportSeriesRequired
+     * @param isPassportNumberRequired
+     * @return
+     * @throws ApplicationException
      */
-    public static void validate(LoanApplicationRequestDTO dto) throws ApplicationException {
+    public static boolean validate(LoanApplicationRequestDto dto, boolean isAmountRequired, boolean isFirstNameRequired, boolean isLastNameRequired, boolean isMiddleNameRequired,
+                                   boolean isTermRequired, boolean isBirthdateRequired, boolean isEmailRequired, boolean isPassportSeriesRequired, boolean isPassportNumberRequired)
+            throws ApplicationException
+    {
         StringBuilder errorMsg = new StringBuilder();
 
         checkAmount(dto.getAmount(), errorMsg, true);
@@ -68,6 +82,8 @@ public class LoanApplicationRequestDTOValidator {
 
         if (!errorMsg.toString().isBlank())
             throw new ApplicationException(errorMsg.toString());
+
+        return true;
     }
 
     private static void checkAmount(BigDecimal amount, StringBuilder errorMsg, Boolean required) {

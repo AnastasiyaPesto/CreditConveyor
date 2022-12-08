@@ -21,7 +21,7 @@ paths:
         content:
           application/json: 
             schema: 
-              $ref: "#/components/schemas/LoanApplicationRequestDTO"
+              $ref: "#/components/schemas/LoanApplicationRequestDto"
       responses:
         '200':
           description: OK
@@ -30,13 +30,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/LoanOfferDTO"
+                  $ref: "#/components/schemas/LoanOfferDto"
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ApplicationError"
 
   /conveyor/calculation:
     post:
@@ -49,24 +49,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ScoringDataDTO"
+              $ref: "#/components/schemas/ScoringDataDto"
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreditDTO"
+                $ref: "#/components/schemas/CreditDto"
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ApplicationError"
 
 components: 
   schemas:
-    LoanApplicationRequestDTO:
+    LoanApplicationRequestDto:
       type: object
       properties:
         amount:
@@ -118,7 +118,7 @@ components:
         - passportSeries
         - passportNumber
 
-    LoanOfferDTO:
+    LoanOfferDto:
       type: object
       properties:
         applicationId: 
@@ -152,7 +152,7 @@ components:
           type: boolean
           example: true
 
-    ScoringDataDTO:
+    ScoringDataDto:
       type: object
       properties:
         amount:
@@ -208,7 +208,7 @@ components:
           format: int32
           example: 2
         employment:
-          $ref: '#/components/schemas/EmploymentDTO'
+          $ref: '#/components/schemas/EmploymentDto'
         account:
           type: string
           example: 40817810099910004312
@@ -219,7 +219,7 @@ components:
           type: boolean
           example: true
 
-    CreditDTO:
+    CreditDto:
       type: object
       properties:
         amount:
@@ -253,7 +253,7 @@ components:
           items:
             $ref: '#/components/schemas/PaymentScheduleElement'
 
-    EmploymentDTO:
+    EmploymentDto:
       type: object
       properties:
         employmentStatus:
@@ -315,15 +315,15 @@ components:
           format: double
           example: 2985000.00
 
-    Error:
+    ApplicationError:
       type: object
       required:
+        - statusCode
         - message
-        - code
       properties:
-        message:
-          type: string
-        code:
+        statusCode:
           type: integer
           minimum: 100
           maximum: 600
+        message:
+          type: string
