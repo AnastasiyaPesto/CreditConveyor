@@ -1,14 +1,12 @@
 package ru.zentsova.conveyor.services;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.zentsova.conveyor.model.LoanApplicationRequestDto;
-import ru.zentsova.conveyor.model.LoanOfferDto;
-import ru.zentsova.conveyor.util.ConveyorUtils;
+import ru.zentsova.conveyor.model.*;
+import ru.zentsova.conveyor.util.ConveyorCalculator;
 import ru.zentsova.conveyor.util.validator.LoanApplicationRequestDtoValidator;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,22 +16,15 @@ import java.util.stream.Collectors;
  * Class ConveyorService
  */
 @Service
+@RequiredArgsConstructor
 public class ConveyorService {
-    private long applicationId = 0;
 
-    @Value("${base.rate}")
-    private double baseRate;
-    @Value("${monthly.insurance.payment}")
-    private double monthlyInsurancePayment;
-    @Value("${lowering.rate.insurance}")
-    private double loweringRateInsurance;
-    @Value("${lowering.rate.salary.client}")
-    private double loweringRateSalaryClient;
+    private final ConveyorCalculator conveyorCalculator;
 
     /**
      * Calculate and get all possible offers
      * @param loanApplicationRequestDto  input loan application request dto
-     * @return list of all possible sorted by ascending rate offers
+     * @return list of all possible offers sorted by ascending rate offers
      */
     public List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         final List<LoanOfferDto> possibleOffers = new ArrayList<>();
@@ -44,40 +35,50 @@ public class ConveyorService {
             possibleOffers.add(getOffer(loanApplicationRequestDto, true, true));
 
             return possibleOffers.stream()
-                    .sorted(Comparator.comparing(LoanOfferDto::getRate))
+                    .sorted(Comparator.comparing(LoanOfferDto::getRate).reversed())
                     .collect(Collectors.toList());
         }
         return possibleOffers;
     }
 
     private LoanOfferDto getOffer(LoanApplicationRequestDto loanApplicationRequestDto, boolean isSalaryClient, boolean isInsuranceEnabled) {
-        final LoanOfferDto loanOfferDto = new LoanOfferDto();
+        LoanOfferDto loanOfferDto = new LoanOfferDto();
 
-        loanOfferDto.setApplicationId(++applicationId);
+        loanOfferDto.setApplicationId(conveyorCalculator.getApplicationId());
         loanOfferDto.setIsSalaryClient(isSalaryClient);
         loanOfferDto.setIsInsuranceEnabled(isInsuranceEnabled);
         loanOfferDto.setTerm(loanApplicationRequestDto.getTerm());
-        loanOfferDto.setRate(calcRate(isSalaryClient, isInsuranceEnabled));
+        loanOfferDto.setRate(conveyorCalculator.calcRate(isSalaryClient, isInsuranceEnabled));
         loanOfferDto.setRequestedAmount(loanApplicationRequestDto.getAmount());
-        loanOfferDto.setTotalAmount(calcTotalAmount(loanApplicationRequestDto.getAmount().doubleValue(), loanApplicationRequestDto.getTerm(), isInsuranceEnabled));
-        loanOfferDto.setMonthlyPayment(calcMonthlyPayment(loanOfferDto.getRate(), loanApplicationRequestDto.getTerm(), loanOfferDto.getTotalAmount()));
+        loanOfferDto.setTotalAmount(conveyorCalculator.calcTotalAmount(loanApplicationRequestDto.getAmount(), loanApplicationRequestDto.getTerm(), isInsuranceEnabled));
+        loanOfferDto.setMonthlyPayment(conveyorCalculator.calcMonthlyPayment(loanOfferDto.getRate(), loanApplicationRequestDto.getTerm(), loanOfferDto.getTotalAmount()));
 
         return loanOfferDto;
     }
 
-    private BigDecimal calcRate(boolean isSalaryClient, boolean isInsuranceEnabled) {
-        BigDecimal rate = new BigDecimal(baseRate).setScale(2, RoundingMode.HALF_UP);
-        rate = isSalaryClient ? rate.subtract(new BigDecimal(loweringRateSalaryClient).setScale(2, RoundingMode.HALF_UP)) : rate;
-        rate = isInsuranceEnabled ? rate.subtract(new BigDecimal(loweringRateInsurance).setScale(2, RoundingMode.HALF_UP)) : rate;
-        return rate;
-    }
+    public CreditDto getLoanConditions(ScoringDataDto scoringDataDto) {
+        CreditDto creditDto = new CreditDto();
 
-    private BigDecimal calcTotalAmount(double requestedAmount, int term, boolean isInsuranceEnabled) {
-        BigDecimal totalAmount = new BigDecimal(requestedAmount).setScale(2, RoundingMode.HALF_UP);
-        return (isInsuranceEnabled ? totalAmount.add(new BigDecimal(term * monthlyInsurancePayment)) : totalAmount);
-    }
+        BigDecimal scoreRate = conveyorCalculator.calcScoreRate(scoringDataDto);
+        BigDecimal monthlyPayment = conveyorCalculator.calcMonthlyPayment(scoreRate, scoringDataDto.getTerm(), scoringDataDto.getAmount());
+        List<PaymentScheduleElement> paymentSchedule = conveyorCalculator.getPaymentSchedule(scoringDataDto.getAmount(), monthlyPayment, scoreRate, scoringDataDto.getTerm());
 
-    private BigDecimal calcMonthlyPayment(BigDecimal rate, int term, BigDecimal totalAmount) {
-        return ConveyorUtils.calcMonthlyPayment(rate, term, totalAmount);
+        BigDecimal requestedAmount = scoringDataDto.getAmount();
+        BigDecimal allInterestPayment = paymentSchedule.stream()
+                .map(PaymentScheduleElement::getInterestPayment)
+                .reduce(BigDecimal.ONE, BigDecimal::add);
+        BigDecimal totalAmount = conveyorCalculator
+                .calcTotalAmount(scoringDataDto.getAmount(), scoringDataDto.getTerm(), scoringDataDto.getIsInsuranceEnabled())
+                .add(allInterestPayment);
+        creditDto.setPsk(conveyorCalculator.calcPskInPercent(requestedAmount, totalAmount, scoringDataDto.getTerm()));
+
+        creditDto.setTerm(scoringDataDto.getTerm());
+        creditDto.setMonthlyPayment(monthlyPayment);
+        creditDto.setRate(scoreRate);
+        creditDto.setAmount(totalAmount);
+        creditDto.setPaymentSchedule(paymentSchedule);
+        creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
+        creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
+        return creditDto;
     }
 }
