@@ -9,7 +9,7 @@ import ru.zentsova.conveyor.model.CreditDto;
 import ru.zentsova.conveyor.model.LoanApplicationRequestDto;
 import ru.zentsova.conveyor.model.LoanOfferDto;
 import ru.zentsova.conveyor.model.ScoringDataDto;
-import ru.zentsova.conveyor.services.ConveyorService;
+import ru.zentsova.conveyor.services.impl.ConveyorServiceImpl;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConveyorController implements ConveyorApi {
 
-    private final ConveyorService conveyorService;
+    private final ConveyorServiceImpl conveyorService;
 
     @Override
     public ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDTO) {

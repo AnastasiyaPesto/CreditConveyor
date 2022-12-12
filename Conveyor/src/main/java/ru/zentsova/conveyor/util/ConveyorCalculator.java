@@ -21,18 +21,18 @@ import java.util.List;
 @Component
 public class ConveyorCalculator {
 
-    private final BigDecimal MONTHS_PER_YEAR = new BigDecimal("12");
-    private final BigDecimal ONE_HUNDRED = new BigDecimal("100");
-    private final BigDecimal TWO = new BigDecimal("2");
-    private final BigDecimal THREE = new BigDecimal("3");
-    private final BigDecimal FOUR = new BigDecimal("3");
-    private final BigDecimal TWELVE = new BigDecimal("12");
-    private final BigDecimal TWENTY = new BigDecimal("20");
-    private final int MIN_WORK_EXPERIENCE_TOTAL = 6;
-    private final int MIN_WORK_EXPERIENCE_CURRENT = 12;
-    private final int MIN_AGE = 21;
-    private final int MAX_AGE = 60;
-    private final String S_LOAN_DENY_MSG = "Unfortunately, you were denied a loan";
+    private static final BigDecimal MONTHS_PER_YEAR = new BigDecimal("12");
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
+    private static final BigDecimal TWO = new BigDecimal("2");
+    private static final BigDecimal THREE = new BigDecimal("3");
+    private static final BigDecimal FOUR = new BigDecimal("3");
+    private static final BigDecimal TWELVE = new BigDecimal("12");
+    private static final BigDecimal TWENTY = new BigDecimal("20");
+    private static final int MIN_WORK_EXPERIENCE_TOTAL = 6;
+    private static final int MIN_WORK_EXPERIENCE_CURRENT = 12;
+    private static final int MIN_AGE = 21;
+    private static final int MAX_AGE = 60;
+    private static final String S_LOAN_DENY_MSG = "Unfortunately, you were denied a loan";
 
     private long applicationId = 0;
     @Value("${base.rate}")
