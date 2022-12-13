@@ -41,12 +41,12 @@ public class ConveyorCalculator {
     private BigDecimal minRate;
     @Value("${max.rate}")
     private BigDecimal maxRate;
-    @Value("${monthly.insurance.payment}")
-    private double monthlyInsurancePayment;
+    @Value("${insurance.rate}")
+    private BigDecimal insuranceRate;
     @Value("${lowering.rate.insurance}")
-    private double loweringRateInsurance;
+    private BigDecimal loweringRateInsurance;
     @Value("${lowering.rate.salary.client}")
-    private double loweringRateSalaryClient;
+    private BigDecimal loweringRateSalaryClient;
 
     public long getApplicationId() {
         return ++applicationId;
@@ -60,8 +60,8 @@ public class ConveyorCalculator {
      */
     public BigDecimal calcRate(boolean isSalaryClient, boolean isInsuranceEnabled) {
         BigDecimal rate = baseRate.setScale(2, RoundingMode.HALF_UP);
-        rate = isSalaryClient ? rate.subtract(new BigDecimal(loweringRateSalaryClient).setScale(2, RoundingMode.HALF_UP)) : rate;
-        rate = isInsuranceEnabled ? rate.subtract(new BigDecimal(loweringRateInsurance).setScale(2, RoundingMode.HALF_UP)) : rate;
+        rate = isSalaryClient ? rate.subtract(loweringRateSalaryClient.setScale(2, RoundingMode.HALF_UP)) : rate;
+        rate = isInsuranceEnabled ? rate.subtract(loweringRateInsurance.setScale(2, RoundingMode.HALF_UP)) : rate;
         return rate;
     }
 
@@ -91,17 +91,19 @@ public class ConveyorCalculator {
                 break;
         }
 
-        switch (scoringDataDto.getEmployment().getPosition()) {
-            case TRAINEE:
-                finalRate = finalRate.add(TWO);
-                break;
-            case DEVELOPER:
-            case MANAGER:
-                finalRate = finalRate.subtract(TWO);
-                break;
-            case TOP_LEVEL_MANAGER:
-                finalRate = finalRate.subtract(FOUR);
-                break;
+        if (EmploymentDto.EmploymentStatusEnum.EMPLOYED.equals(scoringDataDto.getEmployment().getEmploymentStatus())) {
+            switch (scoringDataDto.getEmployment().getPosition()) {
+                case TRAINEE:
+                    finalRate = finalRate.add(TWO);
+                    break;
+                case DEVELOPER:
+                case MANAGER:
+                    finalRate = finalRate.subtract(TWO);
+                    break;
+                case TOP_LEVEL_MANAGER:
+                    finalRate = finalRate.subtract(FOUR);
+                    break;
+            }
         }
 
         switch (scoringDataDto.getMaritalStatus()) {
@@ -137,7 +139,11 @@ public class ConveyorCalculator {
      */
     public BigDecimal calcTotalAmount(BigDecimal requestedAmount, int term, boolean isInsuranceEnabled) {
         BigDecimal totalAmount = requestedAmount.setScale(2, RoundingMode.HALF_UP);
-        return (isInsuranceEnabled ? totalAmount.add(new BigDecimal(term * monthlyInsurancePayment)) : totalAmount);
+        return (isInsuranceEnabled ? totalAmount.add(calcMonthlyInsurancePayment(requestedAmount).multiply(new BigDecimal(term))) : totalAmount);
+    }
+
+    private BigDecimal calcMonthlyInsurancePayment(BigDecimal requestedAmount) {
+        return requestedAmount.multiply(insuranceRate).divide(TWELVE, 2, RoundingMode.HALF_UP);
     }
 
     /**

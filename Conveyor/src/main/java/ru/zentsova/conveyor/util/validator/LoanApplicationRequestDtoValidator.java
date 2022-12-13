@@ -30,8 +30,11 @@ public class LoanApplicationRequestDtoValidator {
     private static final String S_EMAIL_PATTERN = "Should be like test@test.com";
     private static final String S_SHOULD_BE_EQUAL_OR_MORE_THAN = "Should be more or equal than %s";
     private static final String S_SHOULD_NOT_BE_EMPTY = "Should not be empty";
-    private static final String S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH = "Must be more than 2 and less than 30 characters";
+    private static final String S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH = "Must be more than 2 and less than 30 characters and looks like %s";
     private static final String S_PART_OF_PASSPORT_LENGTH_DIGITS = "Length must be %s digits";
+    private static final String S_FIRST_NAME_PATTERN = "Ivan";
+    private static final String S_LAST_NAME_PATTERN = "Ivanov";
+    private static final String S_MIDDLE_NAME_PATTERN = "Ivanovich";
 
     /** RegEx */
     private static final String REGEX_EMAIL = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
@@ -70,15 +73,15 @@ public class LoanApplicationRequestDtoValidator {
     {
         StringBuilder errorMsg = new StringBuilder();
 
-        checkAmount(dto.getAmount(), errorMsg, true);
-        checkPartOfName(dto.getFirstName(), S_FIRST_NAME, errorMsg, true);
-        checkPartOfName(dto.getLastName(), S_LAST_NAME, errorMsg, true);
-        checkPartOfName(dto.getMiddleName(), S_MIDDLE_NAME, errorMsg, false);
-        checkTerm(dto.getTerm(), errorMsg, true);
-        checkBirthdate(dto.getBirthdate(), errorMsg, true);
-        checkEmail(dto.getEmail(), errorMsg, true);
-        checkPassportSeries(dto.getPassportSeries(), errorMsg, true);
-        checkPassportNumber(dto.getPassportNumber(), errorMsg, true);
+        checkAmount(dto.getAmount(), errorMsg, isAmountRequired);
+        checkPartOfName(dto.getFirstName(), S_FIRST_NAME, S_FIRST_NAME_PATTERN, errorMsg, isFirstNameRequired);
+        checkPartOfName(dto.getLastName(), S_LAST_NAME, S_LAST_NAME_PATTERN, errorMsg, isLastNameRequired);
+        checkPartOfName(dto.getMiddleName(), S_MIDDLE_NAME, S_MIDDLE_NAME_PATTERN, errorMsg, isMiddleNameRequired);
+        checkTerm(dto.getTerm(), errorMsg, isTermRequired);
+        checkBirthdate(dto.getBirthdate(), errorMsg, isBirthdateRequired);
+        checkEmail(dto.getEmail(), errorMsg, isEmailRequired);
+        checkPassportSeries(dto.getPassportSeries(), errorMsg, isPassportSeriesRequired);
+        checkPassportNumber(dto.getPassportNumber(), errorMsg, isPassportNumberRequired);
 
         if (!errorMsg.toString().isBlank())
             throw new ApplicationException(errorMsg.toString());
@@ -93,11 +96,11 @@ public class LoanApplicationRequestDtoValidator {
             errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, S_TEN_THOUSAND)).append(S_SEMICOLON);
     }
 
-    private void checkPartOfName(String partOfName, String fieldName, StringBuilder errorMsg, Boolean required) {
+    private void checkPartOfName(String partOfName, String fieldName, String pattern, StringBuilder errorMsg, Boolean required) {
         if (required)
             checkNotNull(partOfName, fieldName, errorMsg);
         if (Objects.nonNull(partOfName) && !partOfName.matches(REGEX_PART_OF_NAME))
-            errorMsg.append(fieldName).append(S_SEPARATOR).append(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH).append(S_SEMICOLON);
+            errorMsg.append(fieldName).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, pattern)).append(S_SEMICOLON);
     }
 
     private void checkTerm(Integer term, StringBuilder errorMsg, Boolean required) {
