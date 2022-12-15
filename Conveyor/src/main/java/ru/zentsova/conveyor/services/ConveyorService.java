@@ -11,7 +11,6 @@ import java.util.List;
  * Class ConveyorService
  */
 public interface ConveyorService {
-
     CreditDto getLoanConditions(ScoringDataDto scoringDataDto);
     List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto);
 }

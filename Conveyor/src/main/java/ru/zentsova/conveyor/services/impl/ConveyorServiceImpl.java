@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Class ConveyorService
+ * Class ConveyorServiceImpl
  */
 @Service
 @RequiredArgsConstructor
@@ -78,7 +78,6 @@ public class ConveyorServiceImpl implements ConveyorService {
                 .calcTotalAmount(scoringDataDto.getAmount(), scoringDataDto.getTerm(), scoringDataDto.getIsInsuranceEnabled())
                 .add(allInterestPayment);
         creditDto.setPsk(conveyorCalculator.calcPskInPercent(requestedAmount, totalAmount, scoringDataDto.getTerm()));
-
         creditDto.setTerm(scoringDataDto.getTerm());
         creditDto.setMonthlyPayment(monthlyPayment);
         creditDto.setRate(scoreRate);
@@ -86,6 +85,7 @@ public class ConveyorServiceImpl implements ConveyorService {
         creditDto.setPaymentSchedule(paymentSchedule);
         creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
         creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
+
         return creditDto;
     }
 }
