@@ -14,7 +14,7 @@ import ru.zentsova.conveyor.services.impl.ConveyorServiceImpl;
 import java.util.List;
 
 /**
- * Class ConveyorController
+ * Credit conveyor controller
  */
 @RestController
 @RequiredArgsConstructor

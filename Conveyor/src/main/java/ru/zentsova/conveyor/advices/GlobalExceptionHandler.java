@@ -9,7 +9,7 @@ import ru.zentsova.conveyor.util.exceptions.ApplicationException;
 import ru.zentsova.conveyor.util.exceptions.LoanDecisionException;
 
 /**
- * Class GlobalExceptionHandler
+ * Handling exceptions in controllers
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

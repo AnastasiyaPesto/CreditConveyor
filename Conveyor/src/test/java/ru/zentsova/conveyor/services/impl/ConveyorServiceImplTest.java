@@ -81,8 +81,7 @@ class ConveyorServiceImplTest {
         LoanApplicationRequestDto requestDto = createLoanApplicationRequestDto(requestedAmount, term, firstName, secondName, middleName,
                 email, birthdate, passportSeries, passportNumber);
 
-        when(validator.validate(any(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean()))
-                .thenReturn(true);
+        when(validator.validate(any(), anyBoolean())).thenReturn(true);
 
         when(calculator.getApplicationId()).thenReturn(1L);
         when(calculator.calcRate(anyBoolean(), anyBoolean())).thenReturn(new BigDecimal("15"));
@@ -101,8 +100,7 @@ class ConveyorServiceImplTest {
     public void testGetAllPossibleOffers_shouldBeEmpty_whenRequestNotVerified() {
         LoanApplicationRequestDto request = new LoanApplicationRequestDto();
 
-        when(validator.validate(any(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean()))
-                .thenReturn(false);
+        when(validator.validate(any(), anyBoolean())).thenReturn(false);
 
         List<LoanOfferDto> offers = conveyorService.getAllPossibleOffers(request);
         assertEquals(0, offers.size());

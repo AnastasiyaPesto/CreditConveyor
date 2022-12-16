@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Class ConveyorServiceImpl
+ * Service of getting pre and final loan conditions
  */
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      */
     public List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         final List<LoanOfferDto> possibleOffers = new ArrayList<>();
-        if (loanApplicationRequestDtoValidator.validate(loanApplicationRequestDto, true, true, true, false, true, true, true, true, true)) {
+        if (loanApplicationRequestDtoValidator.validate(loanApplicationRequestDto, true)) {
             possibleOffers.add(getOffer(loanApplicationRequestDto, false, false));
             possibleOffers.add(getOffer(loanApplicationRequestDto, false, true));
             possibleOffers.add(getOffer(loanApplicationRequestDto, true, false));

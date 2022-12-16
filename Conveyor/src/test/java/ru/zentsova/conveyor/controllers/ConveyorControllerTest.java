@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,11 @@ class ConveyorControllerTest {
 
     @Test
     void testGetAllPossibleOffers_shouldReturnOk() {
-        LoanApplicationRequestDto loanAppReqDtoMock = Mockito.mock(LoanApplicationRequestDto.class);
+        LoanApplicationRequestDto loanAppReqDto = new LoanApplicationRequestDto();
         List<LoanOfferDto> offers = List.of(new LoanOfferDto().applicationId(1L), new LoanOfferDto().applicationId(2L));
-        when(conveyorService.getAllPossibleOffers(loanAppReqDtoMock)).thenReturn(offers);
+        when(conveyorService.getAllPossibleOffers(loanAppReqDto)).thenReturn(offers);
 
-        ResponseEntity<List<LoanOfferDto>> response = conveyorController.getAllPossibleOffers(loanAppReqDtoMock);
+        ResponseEntity<List<LoanOfferDto>> response = conveyorController.getAllPossibleOffers(loanAppReqDto);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertNotNull(response.getBody());
@@ -51,10 +50,10 @@ class ConveyorControllerTest {
     @Test
     void testGetFullCalculatedParameters_shouldReturnOk() {
         CreditDto creditDto = new CreditDto().amount(new BigDecimal("300000.00"));
-        ScoringDataDto scoringDataDtoMock = Mockito.mock(ScoringDataDto.class);
-        when(conveyorService.getLoanConditions(scoringDataDtoMock)).thenReturn(creditDto);
+        ScoringDataDto scoringDataDto = new ScoringDataDto();
+        when(conveyorService.getLoanConditions(scoringDataDto)).thenReturn(creditDto);
 
-        ResponseEntity<CreditDto> response = conveyorController.getFullCalculatedParameters(scoringDataDtoMock);
+        ResponseEntity<CreditDto> response = conveyorController.getFullCalculatedParameters(scoringDataDto);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertNotNull(response.getBody());

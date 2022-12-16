@@ -1,0 +1,40 @@
+# Log
+logging:
+  level:
+    org:
+      zalando:
+        logbook: TRACE
+
+# Loan conditions parameters
+rate:
+  base: 12.00
+  min: 5.00
+  max: 18.50
+  insurance: 0.02
+  lowering:
+    insurance: 1.00
+    salary-client: 0.60
+
+age:
+  min: 21
+  max: 60
+work:
+  experience:
+    total:
+      min: 6
+    current:
+      min: 12
+
+term:
+  min: 6
+
+amount:
+  requested:
+    min: 10000.00
+
+regex:
+  email: ^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$
+  name: ([a-zA-Z]{2,30})
+  passport:
+    series: \d{4}
+    number: \d{6}

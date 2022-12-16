@@ -1,5 +1,6 @@
 package ru.zentsova.conveyor.util.validator;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.zentsova.conveyor.model.LoanApplicationRequestDto;
 import ru.zentsova.conveyor.util.exceptions.ApplicationException;
@@ -10,8 +11,7 @@ import java.time.Period;
 import java.util.Objects;
 
 /**
- * Class LoanApplicationRequestDTOValidator
- * Validation input data (pre-scoring)
+ * Validating input data (pre-scoring)
  */
 @Service
 public class LoanApplicationRequestDtoValidator {
@@ -36,52 +36,46 @@ public class LoanApplicationRequestDtoValidator {
     private static final String S_LAST_NAME_PATTERN = "Ivanov";
     private static final String S_MIDDLE_NAME_PATTERN = "Ivanovich";
 
-    /** RegEx */
-    private static final String REGEX_EMAIL = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-    private static final String REGEX_PART_OF_NAME = "([a-zA-Z]{2,30})";
-    private static final String REGEX_PASSPORT_NUMBER = "\\d{6}";
-    private static final String REGEX_PASSPORT_SERIES = "\\d{4}";
-
-    private static final String S_TEN_THOUSAND = "10000.00";
-    private static final BigDecimal AMOUNT = new BigDecimal(S_TEN_THOUSAND);
     private static final int PASSPORT_SERIES_LENGTH = 4;
     private static final int PASSPORT_NUMBER_LENGTH = 6;
-    private static final int MIN_TERM = 6;
-    private static final int MIN_AGE = 21;
 
     private static final String S_SEMICOLON = "; ";
     private static final String S_SEPARATOR = " - ";
 
+    @Value("${regex.email}")
+    private String regexEmail;
+    @Value("${regex.name}")
+    private String regexName;
+    @Value("${regex.passport.series}")
+    private String regexPassportSeries;
+    @Value("${regex.passport.number}")
+    private String regexPassportNumber;
+    @Value("${age.min}")
+    private int ageMin;
+    @Value("${term.min}")
+    private int termMin;
+    @Value("${amount.requested.min}")
+    private BigDecimal amountRequestedMin;
+
     /**
      * Validate (pre-scoring) input loan application request DTO
      * @param dto                      input loan application request dto
-     * @param isAmountRequired         is field amount required
-     * @param isFirstNameRequired      is field first name required
-     * @param isLastNameRequired       is field last name required
      * @param isMiddleNameRequired     is field middle name required
-     * @param isTermRequired           is field term required
-     * @param isBirthdateRequired      is field birthdate required
-     * @param isEmailRequired          is field email required
-     * @param isPassportSeriesRequired is field passport series required
-     * @param isPassportNumberRequired is field passport number required
      * @return true, if data id valid
      * @throws ApplicationException, if data is not valid
      */
-    public boolean validate(LoanApplicationRequestDto dto, boolean isAmountRequired, boolean isFirstNameRequired, boolean isLastNameRequired, boolean isMiddleNameRequired,
-        boolean isTermRequired, boolean isBirthdateRequired, boolean isEmailRequired, boolean isPassportSeriesRequired, boolean isPassportNumberRequired)
-        throws ApplicationException
-    {
+    public boolean validate(LoanApplicationRequestDto dto, boolean isMiddleNameRequired) throws ApplicationException {
         StringBuilder errorMsg = new StringBuilder();
 
-        checkAmount(dto.getAmount(), errorMsg, isAmountRequired);
-        checkPartOfName(dto.getFirstName(), S_FIRST_NAME, S_FIRST_NAME_PATTERN, errorMsg, isFirstNameRequired);
-        checkPartOfName(dto.getLastName(), S_LAST_NAME, S_LAST_NAME_PATTERN, errorMsg, isLastNameRequired);
-        checkPartOfName(dto.getMiddleName(), S_MIDDLE_NAME, S_MIDDLE_NAME_PATTERN, errorMsg, isMiddleNameRequired);
-        checkTerm(dto.getTerm(), errorMsg, isTermRequired);
-        checkBirthdate(dto.getBirthdate(), errorMsg, isBirthdateRequired);
-        checkEmail(dto.getEmail(), errorMsg, isEmailRequired);
-        checkPassportSeries(dto.getPassportSeries(), errorMsg, isPassportSeriesRequired);
-        checkPassportNumber(dto.getPassportNumber(), errorMsg, isPassportNumberRequired);
+        checkAmount(dto.getAmount(), errorMsg);
+        checkFirstName(dto.getFirstName(), errorMsg);
+        checkLastName(dto.getLastName(), errorMsg);
+        checkMiddleName(dto.getMiddleName(), errorMsg, isMiddleNameRequired);
+        checkTerm(dto.getTerm(), errorMsg);
+        checkBirthdate(dto.getBirthdate(), errorMsg);
+        checkEmail(dto.getEmail(), errorMsg);
+        checkPassportSeries(dto.getPassportSeries(), errorMsg);
+        checkPassportNumber(dto.getPassportNumber(), errorMsg);
 
         if (!errorMsg.toString().isBlank())
             throw new ApplicationException(errorMsg.toString());
@@ -89,57 +83,58 @@ public class LoanApplicationRequestDtoValidator {
         return true;
     }
 
-    private void checkAmount(BigDecimal amount, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(amount, S_AMOUNT, errorMsg);
-        if (Objects.nonNull(amount) && amount.compareTo(AMOUNT) < 0)
-            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, S_TEN_THOUSAND)).append(S_SEMICOLON);
+    private void checkAmount(BigDecimal amount, StringBuilder errorMsg) {
+        if (checkNotNull(amount, S_AMOUNT, errorMsg) && amount.compareTo(amountRequestedMin) < 0)
+            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, amountRequestedMin.toString())).append(S_SEMICOLON);
     }
 
-    private void checkPartOfName(String partOfName, String fieldName, String pattern, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(partOfName, fieldName, errorMsg);
-        if (Objects.nonNull(partOfName) && !partOfName.matches(REGEX_PART_OF_NAME))
-            errorMsg.append(fieldName).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, pattern)).append(S_SEMICOLON);
+    private void checkFirstName(String firstName, StringBuilder errorMsg) {
+        if (checkNotNull(firstName, S_FIRST_NAME, errorMsg) && !firstName.matches(regexName))
+            errorMsg.append(S_FIRST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_FIRST_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
-    private void checkTerm(Integer term, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(term, S_TERM, errorMsg);
-        if (Objects.nonNull(term) && term < MIN_TERM)
-            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, MIN_TERM)).append(S_SEMICOLON);
+    private void checkLastName(String lastName, StringBuilder errorMsg) {
+        if (checkNotNull(lastName, S_LAST_NAME, errorMsg) && !lastName.matches(regexName))
+            errorMsg.append(S_LAST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_LAST_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
-    private void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg, Boolean required) {
+    private void checkMiddleName(String middleName, StringBuilder errorMsg, Boolean required) {
         if (required)
-            checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg);
-        if (Objects.nonNull(birthdate) && (Period.between(birthdate, LocalDate.now()).getYears() < MIN_AGE))
-            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, MIN_AGE)).append(S_SEMICOLON);
+            checkNotNull(middleName, S_MIDDLE_NAME, errorMsg);
+        if ((middleName != null && !middleName.isBlank()) && !middleName.matches(regexName))
+            errorMsg.append(S_MIDDLE_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_MIDDLE_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
-    private void checkEmail(String email, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(email, S_EMAIL, errorMsg);
-        if (Objects.nonNull(email) && !email.matches(REGEX_EMAIL))
+    private void checkTerm(Integer term, StringBuilder errorMsg) {
+        if (checkNotNull(term, S_TERM, errorMsg) && term < termMin)
+            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, termMin)).append(S_SEMICOLON);
+    }
+
+    private void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg) {
+        if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < ageMin))
+            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, ageMin)).append(S_SEMICOLON);
+    }
+
+    private void checkEmail(String email, StringBuilder errorMsg) {
+        if (checkNotNull(email, S_EMAIL, errorMsg) && !email.matches(regexEmail))
             errorMsg.append(S_EMAIL).append(S_SEPARATOR).append(S_EMAIL_PATTERN).append(S_SEMICOLON);
     }
 
-    private void checkPassportSeries(String passportSeries, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg);
-        if (Objects.nonNull(passportSeries) && !passportSeries.matches(REGEX_PASSPORT_SERIES))
+    private void checkPassportSeries(String passportSeries, StringBuilder errorMsg) {
+        if (checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg) && !passportSeries.matches(regexPassportSeries))
             errorMsg.append(S_PASSPORT_SERIES).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_SERIES_LENGTH)).append(S_SEMICOLON);
     }
 
-    private void checkPassportNumber(String passportNumber, StringBuilder errorMsg, Boolean required) {
-        if (required)
-            checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg);
-        if (Objects.nonNull(passportNumber) && !passportNumber.matches(REGEX_PASSPORT_NUMBER))
+    private void checkPassportNumber(String passportNumber, StringBuilder errorMsg) {
+        if (checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg) && !passportNumber.matches(regexPassportNumber))
             errorMsg.append(S_PASSPORT_NUMBER).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_NUMBER_LENGTH)).append(S_SEMICOLON);
     }
 
-    private void checkNotNull(Object field, String fieldName, StringBuilder errorMsg) {
-        if (Objects.isNull(field))
+    private boolean checkNotNull(Object field, String fieldName, StringBuilder errorMsg) {
+        if (Objects.isNull(field) || (field instanceof String && ((String) field).isBlank())) {
             errorMsg.append(fieldName).append(S_SEPARATOR).append(S_SHOULD_NOT_BE_EMPTY).append(S_SEMICOLON);
+            return false;
+        }
+        return true;
     }
 }

@@ -24,12 +24,16 @@ class ConveyorCalculatorTest {
     @BeforeEach
     public void init() throws NoSuchFieldException, IllegalAccessException {
         calculator = new ConveyorCalculator();
-        setField(calculator, "baseRate", new BigDecimal("12.00"));
-        setField(calculator, "minRate", new BigDecimal("5.80"));
-        setField(calculator, "maxRate", new BigDecimal("18.50"));
-        setField(calculator, "insuranceRate", new BigDecimal("0.02"));
-        setField(calculator, "loweringRateInsurance", new BigDecimal("1.00"));
-        setField(calculator, "loweringRateSalaryClient", new BigDecimal("0.60"));
+        setField(calculator, "rateBase", new BigDecimal("12.00"));
+        setField(calculator, "rateMin", new BigDecimal("5.80"));
+        setField(calculator, "rateMax", new BigDecimal("18.50"));
+        setField(calculator, "rateInsurance", new BigDecimal("0.02"));
+        setField(calculator, "rateLoweringInsurance", new BigDecimal("1.00"));
+        setField(calculator, "rateLoweringSalaryClient", new BigDecimal("0.60"));
+        setField(calculator, "ageMin", 21);
+        setField(calculator, "ageMax", 60);
+        setField(calculator, "workExperienceTotalMin", 6);
+        setField(calculator, "workExperienceCurrentMin", 12);
     }
 
     @Test
@@ -164,7 +168,7 @@ class ConveyorCalculatorTest {
     }
 
     @Test
-    public void testCalcScoreRate_shouldReturnValidRate_whenEmployedTopLevelManagerMarriedNotDependentAmount() {
+    public void testCalcScoreRate_shouldReturnRateMin_whenEmployedTopLevelManagerMarriedNotDependentAmount() {
         EmploymentDto emp = new EmploymentDto().employmentStatus(EmploymentDto.EmploymentStatusEnum.EMPLOYED).salary(new BigDecimal("50000.00"))
                 .workExperienceCurrent(7).workExperienceTotal(24).position(EmploymentDto.PositionEnum.TOP_LEVEL_MANAGER);
         ScoringDataDto dto = new ScoringDataDto().birthdate(LocalDate.of(1991, 1, 1)).amount(new BigDecimal("300000.00")).employment(emp)
@@ -172,7 +176,7 @@ class ConveyorCalculatorTest {
 
         BigDecimal rate = calculator.calcScoreRate(dto);
 
-        assertEquals(new BigDecimal("6.00"), rate);
+        assertEquals(new BigDecimal("5.80"), rate);
     }
 
     @Test
@@ -212,7 +216,7 @@ class ConveyorCalculatorTest {
     }
 
     @Test
-    public void testCalcScoreRate_shouldReturnMinRate_whenEmployedTopLevelManagerMarriedOneDependentAmount() {
+    public void testCalcScoreRate_shouldReturnRateMin_whenEmployedTopLevelManagerMarriedOneDependentAmount() {
         EmploymentDto emp = new EmploymentDto().employmentStatus(EmploymentDto.EmploymentStatusEnum.EMPLOYED).salary(new BigDecimal("50000.00"))
                 .workExperienceCurrent(7).workExperienceTotal(24).position(EmploymentDto.PositionEnum.TOP_LEVEL_MANAGER);
         ScoringDataDto dto = new ScoringDataDto().birthdate(LocalDate.of(1991, 1, 1)).amount(new BigDecimal("300000.00")).employment(emp)
@@ -223,7 +227,19 @@ class ConveyorCalculatorTest {
         assertEquals(new BigDecimal("5.80"), rate);
     }
 
-    private void setField(ConveyorCalculator conveyorCalculator, String filedName, BigDecimal fieldValue) throws IllegalAccessException, NoSuchFieldException {
+    @Test
+    public void testCalcScoreRate_shouldReturnValidRate_whenBusinessOwnerMarriedMarriedOneDependentAmount() {
+        EmploymentDto emp = new EmploymentDto().employmentStatus(EmploymentDto.EmploymentStatusEnum.BUSINESS_OWNER).salary(new BigDecimal("50000.00"))
+                .workExperienceCurrent(7).workExperienceTotal(24);
+        ScoringDataDto dto = new ScoringDataDto().birthdate(LocalDate.of(1991, 1, 1)).amount(new BigDecimal("300000.00")).employment(emp)
+                .isInsuranceEnabled(true).isSalaryClient(true).maritalStatus(ScoringDataDto.MaritalStatusEnum.MARRIED).dependentAmount(1);
+
+        BigDecimal rate = calculator.calcScoreRate(dto);
+
+        assertEquals(new BigDecimal("10.40"), rate);
+    }
+
+    private void setField(ConveyorCalculator conveyorCalculator, String filedName, Object fieldValue) throws IllegalAccessException, NoSuchFieldException {
         Field field = conveyorCalculator.getClass().getDeclaredField(filedName);
         field.setAccessible(true);
         field.set(conveyorCalculator, fieldValue);

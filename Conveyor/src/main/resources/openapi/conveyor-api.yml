@@ -175,9 +175,9 @@ components:
         gender:
           type: string
           enum:
-            - male
-            - female
-            - not binary
+            - MALE
+            - FEMALE
+            - NOT BINARY
           example: female
         birthdate:
           type: string
@@ -199,10 +199,10 @@ components:
         maritalStatus:
           type: string
           enum:
-            - single
-            - married
-            - divorced
-            - widower
+            - SINGLE
+            - MARRIED
+            - DIVORCED
+            - WIDOWER
         dependentAmount:
           type: integer
           format: int32
@@ -259,10 +259,10 @@ components:
         employmentStatus:
           type: string
           enum:
-            - employed
-            - unemployed
-            - self-employed
-            - business owner
+            - EMPLOYED
+            - UNEMPLOYED
+            - SELF-EMPLOYED
+            - BUSINESS OWNER
           example: employed
         employerINN:
           type: string
@@ -274,10 +274,10 @@ components:
         position:
           type: string
           enum:
-            - top level manager
-            - manager
-            - developer
-            - trainee
+            - TOP LEVEL MANAGER
+            - MANAGER
+            - DEVELOPER
+            - TRAINEE
         workExperienceTotal:
           type: integer
           format: int32
