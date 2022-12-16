@@ -2,8 +2,9 @@
 
 This is implementation microservice "Conveyor" which is part of application "Credit conveyor"
 
-Used technologies:
-Java 11, Spring Boot 2.7.6, Open API ()
+**Used technologies:**
+Java 11, Spring Boot 2.7.6, Open API, Swagger, JUnit 5, Mockito
+
 ### API endpoints
 
 **POST**
