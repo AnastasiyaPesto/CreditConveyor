@@ -26,7 +26,7 @@ public class ConveyorServiceImpl implements ConveyorService {
     /**
      * Calculate and get all possible offers
      * @param loanApplicationRequestDto  input loan application request dto
-     * @return list of all possible offers sorted by ascending rate offers
+     * @return list of all possible offers sorted by descending rate offers
      */
     public List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         final List<LoanOfferDto> possibleOffers = new ArrayList<>();
