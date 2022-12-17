@@ -6,6 +6,9 @@ Implementation of "Credit conveyor" project by Neoflex
 ## What has already been implemented?
 
 ##### :white_check_mark: Microservice "Conveyor".   
+Implementation and README.md in the Conveyor folder.   
 ##### :o: Microservice "Deal".   
 ##### :o: Microservice "Application".   
-Implementation and README.md in the Conveyor folder
+##### :o: Microservice "Dossier".   
+##### :o: Microservice "Auth".   
+##### :o: Microservice "Gateway".   
