@@ -12,3 +12,5 @@ Implementation and README.md in the Conveyor folder.
 ##### :o: Microservice "Dossier".   
 ##### :o: Microservice "Auth".   
 ##### :o: Microservice "Gateway".   
+
+![Architecture](https://github.com/AnastasiyaPesto/CreditConveyor/blob/main/Images/Architecture.png)
