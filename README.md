@@ -13,5 +13,6 @@ Choose ___feature/MS-Deal/Registration_and_full_calculation_loan_parameters___ b
 ##### :lock: Microservice "Dossier".   
 ##### :lock: Microservice "Auth".   
 ##### :lock: Microservice "Gateway".   
+##### :lock: Microservice "Audit".   
 
 ![Architecture](https://github.com/AnastasiyaPesto/CreditConveyor/blob/main/Images/Architecture.png)
