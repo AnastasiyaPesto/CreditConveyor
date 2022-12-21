@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-credit-table
+      author: Zentsova Anastasiia
+      changes:
+        - createTable:
+            tableName: credit
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: amount
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: term
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: monthly_payment
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rate
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: psk
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_schedule
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: insurance_enable
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: salary_client
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credit_status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false

@@ -1,0 +1,11 @@
+#openapi: 3.v-1.0.3
+#info:
+#  title: Deal conveyor
+#  description: AAAAAA
+#  version: 1.v-1.0.v-1.0
+#  contact:
+#    name: Zentsova Anastasiia
+#    email: pestovnikovaanastasiia@gmail.com
+#servers:
+#  - url: http://localhost:8080/
+#    description: Development server
