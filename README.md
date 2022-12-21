@@ -7,6 +7,7 @@ Implementation of "Credit conveyor" project by Neoflex
 
 ##### :white_check_mark: Microservice "Conveyor".   
 Implementation and README.md in the Conveyor folder.   
+Choose ___develop___ branch.
 ##### :lock::soon: Microservice "Deal".     
 Choose ___feature/MS-Deal/Registration_and_full_calculation_loan_parameters___ branch. I'm working on this microservice now. 
 ##### :lock: Microservice "Application".   
