@@ -1,4 +1,4 @@
-# Microservice "Conveyor"
+# Microservice "Deal"
 
 This is implementation microservice "Deal" which is part of application "Credit conveyor"
 
