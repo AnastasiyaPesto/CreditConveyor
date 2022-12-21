@@ -1,4 +1,4 @@
-package ru.zentsova.Deal.model;
+package ru.zentsova.deal.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Getter;

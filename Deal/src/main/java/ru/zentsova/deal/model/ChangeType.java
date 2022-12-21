@@ -1,4 +1,4 @@
-package ru.zentsova.Deal.model;
+package ru.zentsova.deal.model;
 
 public enum ChangeType {
     AUTOMATIC,

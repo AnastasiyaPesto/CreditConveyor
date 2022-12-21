@@ -1,4 +1,4 @@
-package ru.zentsova.Deal;
+package ru.zentsova.deal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,7 +1,6 @@
-package ru.zentsova.Deal.model;
+package ru.zentsova.deal.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import liquibase.pro.packaged.B;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

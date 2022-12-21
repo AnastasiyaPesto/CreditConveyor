@@ -1,7 +1,6 @@
-package ru.zentsova.Deal.model;
+package ru.zentsova.deal.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import liquibase.pro.packaged.S;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
