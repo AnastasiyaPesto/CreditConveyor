@@ -58,7 +58,7 @@ class LoanApplicationRequestDtoValidatorTest {
         String expectedMessage = "amount - Should be more or equal than 10000.00; firstName - Must be more than 2 and less than 30 characters and looks like Ivan; " +
                 "lastName - Must be more than 2 and less than 30 characters and looks like Ivanov; " +
                 "middleName - Must be more than 2 and less than 30 characters and looks like Ivanovich; term - Should be more or equal than 6; " +
-                "birthdate - Should be more or equal than 21; email - Should be like test@test.com; passportSeries - Length must be 4 digits; " +
+                "birthdate - Age should be more or equal than 21; email - Should be like test@test.com; passportSeries - Length must be 4 digits; " +
                 "passportNumber - Length must be 6 digits; ";
         String actualMessage = ex.getMessage();
 

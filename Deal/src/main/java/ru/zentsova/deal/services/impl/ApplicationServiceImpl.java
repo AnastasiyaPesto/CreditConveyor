@@ -24,7 +24,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setClient(client);
         Application savedApplication = applicationRepository.save(application);
         log.info("Application {} is created and saved", savedApplication);
-        
+
         return savedApplication;
     }
 }
