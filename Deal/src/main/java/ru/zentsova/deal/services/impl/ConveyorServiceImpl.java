@@ -17,9 +17,9 @@ public class ConveyorServiceImpl implements ConveyorService {
     }
 
     @Override
-    public List<LoanOfferDto> sortByRate(List<LoanOfferDto> offers) {
+    public List<LoanOfferDto> sort(List<LoanOfferDto> offers, Comparator<LoanOfferDto> comparator) {
         return offers.stream()
-                .sorted(Comparator.comparing(LoanOfferDto::getRate).reversed())
+                .sorted(comparator)
                 .collect(Collectors.toList());
     }
 }

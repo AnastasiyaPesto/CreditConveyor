@@ -13,8 +13,8 @@ import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.ConveyorService;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,7 +45,7 @@ public class DealController implements DealApi {
 
         ResponseEntity<List<LoanOfferDto>> offersResponse = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
         conveyorService.setApplicationId(offersResponse.getBody(), createdApplication.getId());
-        List<LoanOfferDto> offers = conveyorService.sortByRate(offersResponse.getBody());
+        List<LoanOfferDto> offers = conveyorService.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
