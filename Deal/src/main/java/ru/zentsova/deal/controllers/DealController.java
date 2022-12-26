@@ -11,8 +11,10 @@ import ru.zentsova.deal.mappers.PassportMapper;
 import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
+import ru.zentsova.deal.services.ConveyorService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +25,7 @@ public class DealController implements DealApi {
     private final ClientService clientService;
     private final ApplicationService applicationService;
     private final ConveyorServiceClient conveyorServiceClient;
+    private final ConveyorService conveyorService;
 
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
@@ -38,9 +41,12 @@ public class DealController implements DealApi {
     public ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         Client client = clientMapper.loanApplicationRequestDtoToClient(loanApplicationRequestDto);
         Passport passport = passportMapper.loanOfferDtoToPassport(loanApplicationRequestDto);
-        applicationService.createApplicationAndSave(clientService.save(client, passport));
+        Application createdApplication = applicationService.createApplicationAndSave(clientService.save(client, passport));
 
-        ResponseEntity<List<LoanOfferDto>> offers = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
-        return new ResponseEntity<>(offers.getBody(), HttpStatus.OK);
+        ResponseEntity<List<LoanOfferDto>> offersResponse = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
+        conveyorService.setApplicationId(offersResponse.getBody(), createdApplication.getId());
+        List<LoanOfferDto> offers = conveyorService.sortByRate(offersResponse.getBody());
+
+        return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 }
