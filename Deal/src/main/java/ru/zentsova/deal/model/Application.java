@@ -4,6 +4,8 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -23,18 +25,21 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "credit_id", referencedColumnName = "id")
     private Credit credit;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
+    @Column(name = "status", length = 50)
     private ApplicationStatus status;
 
+    @CreationTimestamp
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
@@ -42,10 +47,10 @@ public class Application {
     @Column(name = "applied_offer")
     private String applied_offer;
 
-    @Column(name = "sign_date", nullable = false)
+    @Column(name = "sign_date")
     private LocalDateTime signDate;
 
-    @Column(name = "ses_code", nullable = false, length = 10)
+    @Column(name = "ses_code", length = 10)
     private String sesCode;
 
     @Type(type = "jsonb")

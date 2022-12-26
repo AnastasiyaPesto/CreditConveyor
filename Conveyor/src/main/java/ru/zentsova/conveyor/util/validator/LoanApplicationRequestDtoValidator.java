@@ -27,6 +27,7 @@ public class LoanApplicationRequestDtoValidator {
     private static final String S_PASSPORT_SERIES = "passportSeries";
     private static final String S_TERM = "term";
 
+    private static final String S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN = "Age should be more or equal than %s";
     private static final String S_EMAIL_PATTERN = "Should be like test@test.com";
     private static final String S_SHOULD_BE_EQUAL_OR_MORE_THAN = "Should be more or equal than %s";
     private static final String S_SHOULD_NOT_BE_EMPTY = "Should not be empty";
@@ -112,7 +113,7 @@ public class LoanApplicationRequestDtoValidator {
 
     private void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg) {
         if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < ageMin))
-            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, ageMin)).append(S_SEMICOLON);
+            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN, ageMin)).append(S_SEMICOLON);
     }
 
     private void checkEmail(String email, StringBuilder errorMsg) {

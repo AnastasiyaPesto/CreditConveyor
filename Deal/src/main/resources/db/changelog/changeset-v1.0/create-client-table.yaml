@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-client-table
+      id: create-clients-table
       author: Zentsova Anastasiia
       changes:
         - createTable:
@@ -40,30 +40,18 @@ databaseChangeLog:
               - column:
                   name: gender
                   type: varchar(20)
-                  constraints:
-                    nullable: false
               - column:
                   name: marital_status
                   type: varchar(50)
-                  constraints:
-                    nullable: false
               - column:
                   name: dependent_amount
                   type: int
-                  constraints:
-                    nullable: false
               - column:
                   name: passport_id
                   type: jsonb
-                  constraints:
-                    nullable: false
               - column:
                   name: employment_id
                   type: jsonb
-                  constraints:
-                    nullable: false
               - column:
                   name: account
                   type: varchar(50)
-                  constraints:
-                    nullable: false

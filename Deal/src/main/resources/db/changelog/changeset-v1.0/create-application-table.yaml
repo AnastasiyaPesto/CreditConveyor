@@ -21,8 +21,6 @@ databaseChangeLog:
               - column:
                   name: status
                   type: varchar(50)
-                  constraints:
-                    nullable: false
               - column:
                   name: creation_date
                   type: datetime
@@ -31,23 +29,15 @@ databaseChangeLog:
               - column:
                   name: applied_offer
                   type: jsonb
-                  constraints:
-                    nullable: false
               - column:
                   name: sign_date
                   type: datetime
-                  constraints:
-                    nullable: false
               - column:
                   name: ses_code
                   type: varchar(10)
-                  constraints:
-                    nullable: false
               - column:
                   name: status_history
                   type: jsonb
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: application
             baseColumnNames: client_id

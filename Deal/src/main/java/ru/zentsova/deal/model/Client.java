@@ -4,6 +4,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = "application")
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "client")
@@ -39,25 +41,25 @@ public class Client {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false, length = 20)
+    @Column(name = "gender", length = 20)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "marital_status", nullable = false, length = 50)
+    @Column(name = "marital_status", length = 50)
     private MaritalStatus maritalStatus;
 
-    @Column(name = "dependent_amount", nullable = false)
+    @Column(name = "dependent_amount")
     private int dependentAmount;
 
     @Type(type = "jsonb")
-    @Column(name = "passport_id", nullable = false)
-    private String passportId;
+    @Column(name = "passport_id")
+    private Passport passportId;
 
     @Type(type = "jsonb")
-    @Column(name = "employment_id", nullable = false)
-    private String employmentId;
+    @Column(name = "employment_id")
+    private Employment employmentId;
 
-    @Column(name = "account", nullable = false, length = 50)
+    @Column(name = "account", length = 50)
     private String account;
 
     @OneToOne(mappedBy = "client")
