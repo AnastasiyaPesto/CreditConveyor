@@ -4,15 +4,18 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "credit")
@@ -40,13 +43,13 @@ public class Credit {
 
     @Type(type = "jsonb")
     @Column(name = "payment_schedule")
-    private String paymentSchedule;
+    private List<PaymentScheduleElement> paymentSchedule;
 
     @Column(name = "insurance_enable")
-    private boolean insuranceEnable;
+    private boolean isInsuranceEnable;
 
     @Column(name = "salary_client")
-    private boolean salaryClient;
+    private boolean isSalaryClient;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "credit_status")

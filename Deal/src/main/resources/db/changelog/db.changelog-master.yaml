@@ -11,5 +11,8 @@ databaseChangeLog:
       file: changeset-v1.0/create-credit-table.yaml
       relativeToChangelogFile: true
   - include:
+      file: changeset-v1.0/create-applied-offer-table.yaml
+      relativeToChangelogFile: true
+  - include:
       file: changeset-v1.0/create-application-table.yaml
       relativeToChangelogFile: true

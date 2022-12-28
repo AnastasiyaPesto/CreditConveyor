@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-application-table
+      id: 3
       author: Zentsova Anastasiia
       changes:
         - createTable:
@@ -17,6 +17,9 @@ databaseChangeLog:
                   type: bigint
               - column:
                   name: credit_id
+                  type: bigint
+              - column:
+                  name: applied_offer_id
                   type: bigint
               - column:
                   name: status
@@ -51,4 +54,11 @@ databaseChangeLog:
             referencedTableName: credit
             referencedColumnNames: id
             constraintName: fk_application_credit
+            onDelete: SET NULL
+        - addForeignKeyConstraint:
+            baseTableName: application
+            baseColumnNames: applied_offer_id
+            referencedTableName: applied_offer
+            referencedColumnNames: application_id
+            constraintName: fk_application_applied_offer
             onDelete: SET NULL

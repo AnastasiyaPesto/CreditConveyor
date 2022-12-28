@@ -187,19 +187,9 @@ components:
       type: object
       properties:
         gender:
-          type: string
-          enum:
-            - MALE
-            - FEMALE
-            - NOT BINERY
-          example: female
+          $ref: '#/components/schemas/Gender'
         maritalStatus:
-          type: string
-          enum:
-            - SINGLE
-            - MARRIED
-            - DIVORCED
-            - WIDOWER
+          $ref: '#/components/schemas/MaritalStatus'
         dependentAmount:
           type: integer
           format: int32
@@ -207,14 +197,12 @@ components:
         passportIssueDate:
           type: string
           format: date
-          pattern: (\d{4}-\d{2}-\d{2})
           example: 2019-05-31
         passportIssueBranch:
           type: string
           example: МВД по Республике Карелия
         employment:
-          type: object
-          format: EmploymentDto
+          $ref: '#/components/schemas/EmploymentDto'
         account:
           type: string
           example: 40817810099910004312
@@ -227,6 +215,63 @@ components:
         - employment
         - account
 
+    ScoringDataDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        firstName:
+          type: string
+          example: Ivan
+        lastName:
+          type: string
+          example: Ivanov
+        middleName:
+          type: string
+          example: Ivanovich
+        gender:
+          $ref: '#/components/schemas/Gender'
+        birthdate:
+          type: string
+          format: date
+          example: 1991-01-01
+        passportSeries:
+          type: string
+          example: 8610
+        passportNumber:
+          type: string
+          example: 211009
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2019-05-31
+        passportIssueBranch:
+          type: string
+          example: МВД по Республике Карелия
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatus'
+        dependentAmount:
+          type: integer
+          format: int32
+          example: 2
+        employment:
+          $ref: '#/components/schemas/EmploymentDto'
+        account:
+          type: string
+          example: 40817810099910004312
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+
     EmploymentDto:
       type: object
       properties:
@@ -237,7 +282,7 @@ components:
             - UNEMPLOYED
             - SELF-EMPLOYED
             - BUSINESS OWNER
-          example: employed
+          example: EMPLOYED
         employerINN:
           type: string
           example: 784047367962
@@ -252,6 +297,7 @@ components:
             - MANAGER
             - DEVELOPER
             - TRAINEE
+          example: DEVELOPER
         workExperienceTotal:
           type: integer
           format: int32
@@ -268,6 +314,68 @@ components:
         - workExperienceTotal
         - workExperienceCurrent
 
+    CreditDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        monthlyPayment:
+          type: number
+          format: double
+          example: 190000
+        rate:
+          type: number
+          format: double
+          example: 10.4
+        psk:
+          type: number
+          format: double
+          example: 1715600
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+        paymentSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElement'
+
+    PaymentScheduleElement:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+          example: 7
+        date:
+          type: string
+          format: date
+          example: 2022-11-15
+        totalPayment:
+          type: number
+          format: double
+          example: 34056.00
+        interestPayment:
+          type: number
+          format: double
+          example: 11000.00
+        debtPayment:
+          type: number
+          format: double
+          example: 23056.00
+        remainingDebt:
+          type: number
+          format: double
+          example: 2985000.00
+
     ApplicationError:
       type: object
       required:
@@ -280,3 +388,18 @@ components:
           maximum: 600
         message:
           type: string
+
+    MaritalStatus:
+      type: string
+      enum:
+        - SINGLE
+        - MARRIED
+        - DIVORCED
+        - WIDOWER
+
+    Gender:
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+        - NOT BINARY

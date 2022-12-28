@@ -3,9 +3,10 @@ server:
 
 logging:
   level:
-    org:
-      zalando:
-        logbook: TRACE
+    root: INFO
+    ru.zentsova.deal: DEBUG
+    org.springframework: INFO
+    org.zalando.logbook: TRACE
 
 spring:
   liquibase:
@@ -24,3 +25,16 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+
+feign:
+  name: conveyor
+  url: http://localhost:8080/conveyor/
+
+
+exception:
+  message:
+    application-was-not-found: "Application wasn't found with id=%s"
+
+log:
+  message:
+    was-saved: "{} was saved"

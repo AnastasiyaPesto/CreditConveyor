@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-clients-table
+      id: 1
       author: Zentsova Anastasiia
       changes:
         - createTable:

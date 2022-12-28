@@ -6,12 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.zentsova.deal.api.DealApi;
 import ru.zentsova.deal.feign.clients.ConveyorServiceClient;
+import ru.zentsova.deal.mappers.AppliedOfferMapper;
 import ru.zentsova.deal.mappers.ClientMapper;
+import ru.zentsova.deal.mappers.CreditMapper;
 import ru.zentsova.deal.mappers.PassportMapper;
 import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.services.ApplicationService;
+import ru.zentsova.deal.services.AppliedOfferService;
 import ru.zentsova.deal.services.ClientService;
-import ru.zentsova.deal.services.ConveyorService;
+import ru.zentsova.deal.services.CreditService;
+import ru.zentsova.deal.utils.ConveyorServiceUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,31 +25,49 @@ import java.util.List;
 public class DealController implements DealApi {
 
     private final ClientMapper clientMapper;
+    private final CreditMapper creditMapper;
     private final PassportMapper passportMapper;
+    private final AppliedOfferMapper appliedOfferMapper;
+
     private final ClientService clientService;
+    private final CreditService creditService;
     private final ApplicationService applicationService;
+    private final AppliedOfferService appliedOfferService;
+
     private final ConveyorServiceClient conveyorServiceClient;
-    private final ConveyorService conveyorService;
+    private final ConveyorServiceUtils conveyorServiceUtils;
 
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
-        return DealApi.super.chooseOneOffer(loanOfferDto);
+        applicationService.update(
+                applicationService.findById(loanOfferDto.getApplicationId()),
+                appliedOfferService.save(appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto))
+        );
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> finishRegistrationAndFullCalculation(Long applicationId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
-        return DealApi.super.finishRegistrationAndFullCalculation(applicationId, finishRegistrationRequestDto);
+        ScoringDataDto scoringDataDto = new ScoringDataDto();
+        Application application = applicationService.findById(applicationId);
+        conveyorServiceUtils.enrichScoringDataDto(scoringDataDto, finishRegistrationRequestDto, application);
+
+        CreditDto creditDto = conveyorServiceClient.getFullCalculatedParameters(scoringDataDto).getBody();
+        Credit createdCredit = creditService.save(creditMapper.creditDtoToCredit(creditDto));
+        applicationService.update(application, createdCredit, ApplicationStatus.PREAPPROVAL, ChangeType.MANUAL);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         Client client = clientMapper.loanApplicationRequestDtoToClient(loanApplicationRequestDto);
         Passport passport = passportMapper.loanOfferDtoToPassport(loanApplicationRequestDto);
-        Application createdApplication = applicationService.createApplicationAndSave(clientService.save(client, passport));
+        Application createdApplication = applicationService.createAndSaveNewApplication(clientService.save(client, passport));
 
         ResponseEntity<List<LoanOfferDto>> offersResponse = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
-        conveyorService.setApplicationId(offersResponse.getBody(), createdApplication.getId());
-        List<LoanOfferDto> offers = conveyorService.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
+        conveyorServiceUtils.setApplicationIdToOffers(offersResponse.getBody(), createdApplication.getId());
+        List<LoanOfferDto> offers = conveyorServiceUtils.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "application")
+@ToString
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "client")

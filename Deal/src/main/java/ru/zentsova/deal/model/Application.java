@@ -11,10 +11,12 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "application")
@@ -35,6 +37,11 @@ public class Application {
     @JoinColumn(name = "credit_id", referencedColumnName = "id")
     private Credit credit;
 
+    @ToString.Exclude
+    @OneToOne
+    @JoinColumn(name = "applied_offer_id", referencedColumnName = "application_id")
+    private AppliedOffer appliedOffer;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)
     private ApplicationStatus status;
@@ -42,10 +49,6 @@ public class Application {
     @CreationTimestamp
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
-
-    @Type(type = "jsonb")
-    @Column(name = "applied_offer")
-    private String applied_offer;
 
     @Column(name = "sign_date")
     private LocalDateTime signDate;
@@ -55,5 +58,5 @@ public class Application {
 
     @Type(type = "jsonb")
     @Column(name = "status_history")
-    private String statusHistory;
+    private List<StatusHistory> statusHistory;
 }
