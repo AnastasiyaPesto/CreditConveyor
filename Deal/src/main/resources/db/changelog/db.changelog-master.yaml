@@ -1,18 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: 0
+      id: v-1.0
       author: Zentsova Anastasiia
       tagDatabase:
         tag: db_init
   - include:
-      file: changeset-v1.0/create-client-table.yaml
+      file: v-1.0/create-client-table.yaml
       relativeToChangelogFile: true
   - include:
-      file: changeset-v1.0/create-credit-table.yaml
+      file: v-1.0/create-credit-table.yaml
       relativeToChangelogFile: true
   - include:
-      file: changeset-v1.0/create-applied-offer-table.yaml
-      relativeToChangelogFile: true
-  - include:
-      file: changeset-v1.0/create-application-table.yaml
+      file: v-1.0/create-application-table.yaml
       relativeToChangelogFile: true

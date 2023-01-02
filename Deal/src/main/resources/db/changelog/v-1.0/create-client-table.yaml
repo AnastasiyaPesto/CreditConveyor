@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 2022-12-31-create-client-table
       author: Zentsova Anastasiia
       changes:
         - createTable:
@@ -55,3 +55,6 @@ databaseChangeLog:
               - column:
                   name: account
                   type: varchar(50)
+      rollback:
+        - dropTable:
+            tableName: client

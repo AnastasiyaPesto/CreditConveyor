@@ -376,6 +376,20 @@ components:
           format: double
           example: 2985000.00
 
+    ApplicationStatusHistoryDto:
+      type: object
+      properties:
+        status:
+          type: string
+        time:
+          type: string
+          pattern: yyyy-MM-dd HH:mm:ss.SSSSSS
+        changeType:
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
     ApplicationError:
       type: object
       required:

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.zentsova.deal.feign.exceptions.EntityNotExistException;
 import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.repositories.ApplicationRepository;
-import ru.zentsova.deal.repositories.AppliedOfferRepository;
 import ru.zentsova.deal.services.ApplicationService;
 
 import java.time.LocalDateTime;
@@ -31,9 +30,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Application createAndSaveNewApplication(Client client) {
         Application application = new Application();
         application.setClient(client);
-        setStatus(application, ApplicationStatus.PREAPPROVAL, ChangeType.AUTOMATIC);
+        setStatus(application, ApplicationStatus.PREAPPROVAL, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
         Application createdApplication = applicationRepository.save(application);
-
         log.info("Application {} was created and saved", createdApplication);
 
         return createdApplication;
@@ -42,16 +40,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     public void update(Application application, AppliedOffer appliedOffer) {
         application.setAppliedOffer(appliedOffer);
-        // todo add log
+        log.info("Application id={} was updated: applied_offer_id={}", application.getId(), appliedOffer.getApplicationId());
     }
 
     @Transactional
-    public void update(Application application, Credit credit, ApplicationStatus status, ChangeType changeType) {
+    public void update(Application application, Credit credit, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
         setStatus(application, status, changeType);
         application.setCredit(credit);
+        log.info("Application id={} was updated: credit_id={}", application.getId(), credit.getId());
     }
 
-    public Application findById(Long id) throws EntityNotExistException {
+    public Application findById(Long id) {
         try {
             return applicationRepository.findById(id).orElseThrow();
         } catch (NoSuchElementException ex) {
@@ -60,13 +59,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    public void setStatus(Application application, ApplicationStatus status, ChangeType changeType) {
+    public void setStatus(Application application, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
         application.setStatus(status);
         addStatusHistory(application, status, changeType);
     }
 
-    private void addStatusHistory(Application application, ApplicationStatus status, ChangeType changeType) {
-        StatusHistory statusHistory = new StatusHistory().status(status.name()).time(LocalDateTime.now()).changeType(changeType);
+    private void addStatusHistory(Application application, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
+        ApplicationStatusHistoryDto statusHistory = new ApplicationStatusHistoryDto().status(status.name()).time(LocalDateTime.now().toString()).changeType(changeType);
         if (application.getStatusHistory() == null)
             application.setStatusHistory(new ArrayList<>(Collections.singletonList(statusHistory)));
         else

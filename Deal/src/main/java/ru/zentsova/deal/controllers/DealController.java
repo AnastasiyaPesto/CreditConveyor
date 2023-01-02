@@ -12,7 +12,6 @@ import ru.zentsova.deal.mappers.CreditMapper;
 import ru.zentsova.deal.mappers.PassportMapper;
 import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.services.ApplicationService;
-import ru.zentsova.deal.services.AppliedOfferService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.CreditService;
 import ru.zentsova.deal.utils.ConveyorServiceUtils;
@@ -32,17 +31,13 @@ public class DealController implements DealApi {
     private final ClientService clientService;
     private final CreditService creditService;
     private final ApplicationService applicationService;
-    private final AppliedOfferService appliedOfferService;
 
     private final ConveyorServiceClient conveyorServiceClient;
     private final ConveyorServiceUtils conveyorServiceUtils;
 
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
-        applicationService.update(
-                applicationService.findById(loanOfferDto.getApplicationId()),
-                appliedOfferService.save(appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto))
-        );
+        applicationService.update(applicationService.findById(loanOfferDto.getApplicationId()), appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,7 +49,7 @@ public class DealController implements DealApi {
 
         CreditDto creditDto = conveyorServiceClient.getFullCalculatedParameters(scoringDataDto).getBody();
         Credit createdCredit = creditService.save(creditMapper.creditDtoToCredit(creditDto));
-        applicationService.update(application, createdCredit, ApplicationStatus.PREAPPROVAL, ChangeType.MANUAL);
+        applicationService.update(application, createdCredit, ApplicationStatus.APPROVED, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -35,6 +35,8 @@ public class ConveyorServiceUtils {
                 .account(finishRegistrationRequestDto.getAccount())
                 .passportIssueDate(finishRegistrationRequestDto.getPassportIssueDate())
                 .passportIssueBranch(finishRegistrationRequestDto.getPassportIssueBranch())
+                .amount(application.getAppliedOffer().getTotalAmount())
+                .term(application.getAppliedOffer().getTerm())
                 .isInsuranceEnabled(application.getAppliedOffer().isInsuranceEnabled())
                 .isSalaryClient(application.getAppliedOffer().isSalaryClient());
         Client client = application.getClient();

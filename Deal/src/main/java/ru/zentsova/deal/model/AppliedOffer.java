@@ -1,50 +1,34 @@
 package ru.zentsova.deal.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-@Entity
-@Table(name = "applied_offer")
 public class AppliedOffer {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "application_id", unique = true, nullable = false)
+    @JsonProperty(value = "application_id")
     private long applicationId;
 
-    @Column(name = "requested_amount", nullable = false)
+    @JsonProperty(value = "requested_amount")
     private BigDecimal requestedAmount;
 
-    @Column(name = "total_amount", nullable = false)
+    @JsonProperty(value = "total_amount")
     private BigDecimal totalAmount;
 
-    @Column(name = "term", nullable = false)
     private int term;
 
-    @Column(name = "monthly_payment")
+    @JsonProperty(value = "monthly_payment")
     private BigDecimal monthlyPayment;
 
-    @Column(name = "rate")
     private BigDecimal rate;
 
-    @Column(name = "is_insurance_enabled")
+    @JsonProperty(value = "is_insurance_enabled")
     private boolean isInsuranceEnabled;
 
-    @Column(name = "is_salary_client")
+    @JsonProperty(value = "is_salary_client")
     private boolean isSalaryClient;
-
-    @OneToOne(mappedBy = "appliedOffer")
-    private Application application;
 }

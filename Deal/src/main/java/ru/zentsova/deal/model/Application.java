@@ -37,9 +37,8 @@ public class Application {
     @JoinColumn(name = "credit_id", referencedColumnName = "id")
     private Credit credit;
 
-    @ToString.Exclude
-    @OneToOne
-    @JoinColumn(name = "applied_offer_id", referencedColumnName = "application_id")
+    @Type(type = "jsonb")
+    @Column(name = "applied_offer")
     private AppliedOffer appliedOffer;
 
     @Enumerated(EnumType.STRING)
@@ -58,5 +57,5 @@ public class Application {
 
     @Type(type = "jsonb")
     @Column(name = "status_history")
-    private List<StatusHistory> statusHistory;
+    private List<ApplicationStatusHistoryDto> statusHistory;
 }
