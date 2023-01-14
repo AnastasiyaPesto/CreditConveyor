@@ -1,4 +1,4 @@
-package ru.zentsova.deal.feign.exceptions;
+package ru.zentsova.deal.exceptions;
 
 public class ConveyorException extends Exception {
 

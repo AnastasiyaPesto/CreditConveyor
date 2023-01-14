@@ -1,7 +1,6 @@
-package ru.zentsova.deal.feign.exceptions;
+package ru.zentsova.deal.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.springframework.http.HttpStatus;
