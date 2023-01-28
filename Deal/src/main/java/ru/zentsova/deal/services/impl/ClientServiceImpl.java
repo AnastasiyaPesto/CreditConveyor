@@ -21,7 +21,6 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
 
-    @Override
     @Transactional
     public Client save(Client client, Passport passport) {
         client.setPassportId(passport);

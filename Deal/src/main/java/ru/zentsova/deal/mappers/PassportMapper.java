@@ -7,5 +7,5 @@ import ru.zentsova.deal.model.Passport;
 @Mapper
 public interface PassportMapper {
 
-    Passport loanOfferDtoToPassport(LoanApplicationRequestDto dto);
+    Passport loanApplicationRequestDtoToPassport(LoanApplicationRequestDto dto);
 }

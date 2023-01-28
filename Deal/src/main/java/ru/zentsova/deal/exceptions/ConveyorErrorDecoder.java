@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class ConveyorErrorEncoder implements ErrorDecoder {
+public class ConveyorErrorDecoder implements ErrorDecoder {
 
-    private ErrorDecoder errorDecoder = new Default();
+    private final ErrorDecoder errorDecoder = new Default();
 
     @Override
     public Exception decode(String methodKey, Response response) {
