@@ -1,0 +1,419 @@
+openapi: 3.0.0
+info:
+  title: deal conveyor
+  description: Final registration and full loan parameters calculation
+  version: 1.0.0
+  contact:
+    name: Zentsova Anastasiia
+    email: pestovnikovaanastasiia@gmail.com
+servers:
+  - url: http://localhost:8080/
+    description: Development server
+paths:
+  /deal/application:
+    post:
+      tags:
+        - Deal
+      summary: Calculation of possible loan offers
+      operationId: getAllPossibleOffers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanApplicationRequestDto"
+      responses:
+        '200':
+          description: LoanOfferDto response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanOfferDto"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationError"
+  /deal/offer:
+    put:
+      tags:
+        - Deal
+      summary: Choosing one of the loan offers
+      operationId: chooseOneOffer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanOfferDto"
+      responses:
+        '200':
+          description: Application is saved
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationError"
+  /deal/calculate/{applicationId}:
+    put:
+      parameters:
+        - in: path
+          name: applicationId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - Deal
+      summary: Finish registration and full calculation loan parameters
+      operationId: finishRegistrationAndFullCalculation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FinishRegistrationRequestDto"
+      responses:
+        '200':
+          description: Registration and full calculation is finished
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationError"
+
+components:
+  schemas:
+    LoanApplicationRequestDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          minimum: 10000.00
+          example: 1700000.00
+        term:
+          type: integer
+          format: int32
+          minimum: 6
+          example: 180
+        firstName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivan
+        lastName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivanov
+        middleName:
+          type: string
+          pattern: ([a-zA-Z]{2,30})
+          example: Ivanovich
+        email:
+          type: string
+          pattern: (^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$)
+          example: ivanii@google.com
+        birthdate:
+          type: string
+          pattern: ((19|20)\d\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])
+          example: 1991-01-01
+        passportSeries:
+          type: string
+          pattern: \d{4}
+          example: 8610
+        passportNumber:
+          type: string
+          pattern: \d{6}
+          example: 211009
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - email
+        - birthdate
+        - passportSeries
+        - passportNumber
+
+    LoanOfferDto:
+      type: object
+      properties:
+        applicationId:
+          type: integer
+          format: int64
+          example: 1
+        requestedAmount:
+          type: number
+          format: double
+          example: 1700000.00
+        totalAmount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        monthlyPayment:
+          type: number
+          format: double
+          example: 190000
+        rate:
+          type: number
+          format: double
+          example: 10.4
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+      required:
+        - applicationId
+        - requestedAmount
+        - totalAmount
+        - term
+        - monthlyPayment
+        - rate
+        - isInsuranceEnabled
+        - isSalaryClient
+
+    FinishRegistrationRequestDto:
+      type: object
+      properties:
+        gender:
+          $ref: '#/components/schemas/Gender'
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatus'
+        dependentAmount:
+          type: integer
+          format: int32
+          example: 2
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2019-05-31
+        passportIssueBranch:
+          type: string
+          example: МВД по Республике Карелия
+        employment:
+          $ref: '#/components/schemas/EmploymentDto'
+        account:
+          type: string
+          example: 40817810099910004312
+      required:
+        - gender
+        - maritalStatus
+        - dependentAmount
+        - passportIssueDate
+        - passportIssueBranch
+        - employment
+        - account
+
+    ScoringDataDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        firstName:
+          type: string
+          example: Ivan
+        lastName:
+          type: string
+          example: Ivanov
+        middleName:
+          type: string
+          example: Ivanovich
+        gender:
+          $ref: '#/components/schemas/Gender'
+        birthdate:
+          type: string
+          format: date
+          example: 1991-01-01
+        passportSeries:
+          type: string
+          example: 8610
+        passportNumber:
+          type: string
+          example: 211009
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2019-05-31
+        passportIssueBranch:
+          type: string
+          example: МВД по Республике Карелия
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatus'
+        dependentAmount:
+          type: integer
+          format: int32
+          example: 2
+        employment:
+          $ref: '#/components/schemas/EmploymentDto'
+        account:
+          type: string
+          example: 40817810099910004312
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+
+    EmploymentDto:
+      type: object
+      properties:
+        employmentStatus:
+          type: string
+          enum:
+            - EMPLOYED
+            - UNEMPLOYED
+            - SELF-EMPLOYED
+            - BUSINESS OWNER
+          example: EMPLOYED
+        employerINN:
+          type: string
+          example: 784047367962
+        salary:
+          type: number
+          format: double
+          example: 51000.00
+        position:
+          type: string
+          enum:
+            - TOP LEVEL MANAGER
+            - MANAGER
+            - DEVELOPER
+            - TRAINEE
+          example: DEVELOPER
+        workExperienceTotal:
+          type: integer
+          format: int32
+          example: 36
+        workExperienceCurrent:
+          type: integer
+          format: int32
+          example: 7
+      required:
+        - employmentStatus
+        - employerINN
+        - salary
+        - position
+        - workExperienceTotal
+        - workExperienceCurrent
+
+    CreditDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 3000000.00
+        term:
+          type: integer
+          format: int32
+          example: 180
+        monthlyPayment:
+          type: number
+          format: double
+          example: 190000
+        rate:
+          type: number
+          format: double
+          example: 10.4
+        psk:
+          type: number
+          format: double
+          example: 1715600
+        isInsuranceEnabled:
+          type: boolean
+          example: false
+        isSalaryClient:
+          type: boolean
+          example: true
+        paymentSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElement'
+
+    PaymentScheduleElement:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+          example: 7
+        date:
+          type: string
+          format: date
+          example: 2022-11-15
+        totalPayment:
+          type: number
+          format: double
+          example: 34056.00
+        interestPayment:
+          type: number
+          format: double
+          example: 11000.00
+        debtPayment:
+          type: number
+          format: double
+          example: 23056.00
+        remainingDebt:
+          type: number
+          format: double
+          example: 2985000.00
+
+    ApplicationStatusHistoryDto:
+      type: object
+      properties:
+        status:
+          type: string
+        time:
+          type: string
+          pattern: yyyy-MM-dd HH:mm:ss.SSSSSS
+        changeType:
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
+    ApplicationError:
+      type: object
+      required:
+        - statusCode
+        - message
+      properties:
+        statusCode:
+          type: integer
+          minimum: 100
+          maximum: 600
+        message:
+          type: string
+
+    MaritalStatus:
+      type: string
+      enum:
+        - SINGLE
+        - MARRIED
+        - DIVORCED
+        - WIDOWER
+
+    Gender:
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+        - NOT BINARY

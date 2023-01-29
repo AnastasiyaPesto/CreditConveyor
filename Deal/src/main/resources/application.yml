@@ -1,0 +1,40 @@
+server:
+  port: 8082
+
+logging:
+  level:
+    root: INFO
+    ru.zentsova.deal: DEBUG
+    org.springframework: INFO
+    org.zalando.logbook: TRACE
+
+spring:
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/deal
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+feign:
+  name: conveyor
+  url: http://localhost:8080/conveyor/
+
+
+exception:
+  message:
+    application-not-found: "Application wasn't found with id=%s"
+
+log:
+  message:
+    saved: "{} was saved"

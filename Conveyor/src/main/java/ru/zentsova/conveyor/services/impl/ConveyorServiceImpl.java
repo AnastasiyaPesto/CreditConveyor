@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.zentsova.conveyor.model.*;
 import ru.zentsova.conveyor.services.ConveyorService;
 import ru.zentsova.conveyor.util.ConveyorCalculator;
+import ru.zentsova.conveyor.util.exceptions.ApplicationException;
 import ru.zentsova.conveyor.util.validator.LoanApplicationRequestDtoValidator;
 
 import java.math.BigDecimal;
@@ -27,8 +28,9 @@ public class ConveyorServiceImpl implements ConveyorService {
      * Calculate and get all possible offers
      * @param loanApplicationRequestDto  input loan application request dto
      * @return list of all possible offers sorted by descending rate offers
+     * @throws ApplicationException if loanApplicationRequestDto is invalid
      */
-    public List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
+    public List<LoanOfferDto> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) throws ApplicationException {
         final List<LoanOfferDto> possibleOffers = new ArrayList<>();
         if (loanApplicationRequestDtoValidator.validate(loanApplicationRequestDto, true)) {
             possibleOffers.add(getOffer(loanApplicationRequestDto, false, false));

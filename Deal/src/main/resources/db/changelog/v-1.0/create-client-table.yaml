@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2022-12-31-create-client-table
+      author: Zentsova Anastasiia
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: first_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middle_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: birthdate
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gender
+                  type: varchar(20)
+              - column:
+                  name: marital_status
+                  type: varchar(50)
+              - column:
+                  name: dependent_amount
+                  type: int
+              - column:
+                  name: passport_id
+                  type: jsonb
+              - column:
+                  name: employment_id
+                  type: jsonb
+              - column:
+                  name: account
+                  type: varchar(50)
+      rollback:
+        - dropTable:
+            tableName: client
