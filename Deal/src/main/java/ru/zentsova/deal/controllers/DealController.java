@@ -10,11 +10,21 @@ import ru.zentsova.deal.mappers.AppliedOfferMapper;
 import ru.zentsova.deal.mappers.ClientMapper;
 import ru.zentsova.deal.mappers.CreditMapper;
 import ru.zentsova.deal.mappers.PassportMapper;
-import ru.zentsova.deal.model.*;
+import ru.zentsova.deal.model.Application;
+import ru.zentsova.deal.model.ApplicationStatus;
+import ru.zentsova.deal.model.ApplicationStatusHistoryDto;
+import ru.zentsova.deal.model.Client;
+import ru.zentsova.deal.model.Credit;
+import ru.zentsova.deal.model.CreditDto;
+import ru.zentsova.deal.model.FinishRegistrationRequestDto;
+import ru.zentsova.deal.model.LoanApplicationRequestDto;
+import ru.zentsova.deal.model.LoanOfferDto;
+import ru.zentsova.deal.model.Passport;
+import ru.zentsova.deal.model.ScoringDataDto;
 import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.CreditService;
-import ru.zentsova.deal.utils.ConveyorServiceUtils;
+import ru.zentsova.deal.utils.ConveyorServiceHelper;
 
 import java.util.Comparator;
 import java.util.List;
@@ -33,7 +43,7 @@ public class DealController implements DealApi {
     private final ApplicationService applicationService;
 
     private final ConveyorServiceClient conveyorServiceClient;
-    private final ConveyorServiceUtils conveyorServiceUtils;
+    private final ConveyorServiceHelper conveyorServiceHelper;
 
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
@@ -45,7 +55,7 @@ public class DealController implements DealApi {
     public ResponseEntity<Void> finishRegistrationAndFullCalculation(Long applicationId, FinishRegistrationRequestDto finishRegistrationRequestDto) {
         ScoringDataDto scoringDataDto = new ScoringDataDto();
         Application application = applicationService.findById(applicationId);
-        conveyorServiceUtils.enrichScoringDataDto(scoringDataDto, finishRegistrationRequestDto, application);
+        conveyorServiceHelper.populateScoringDataDto(scoringDataDto, finishRegistrationRequestDto, application);
 
         CreditDto creditDto = conveyorServiceClient.getFullCalculatedParameters(scoringDataDto).getBody();
         Credit createdCredit = creditService.save(creditMapper.creditDtoToCredit(creditDto));
@@ -61,8 +71,8 @@ public class DealController implements DealApi {
         Application createdApplication = applicationService.createAndSaveNewApplication(clientService.save(client, passport));
 
         ResponseEntity<List<LoanOfferDto>> offersResponse = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
-        conveyorServiceUtils.setApplicationIdToOffers(offersResponse.getBody(), createdApplication.getId());
-        List<LoanOfferDto> offers = conveyorServiceUtils.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
+        conveyorServiceHelper.setApplicationIdToOffers(offersResponse.getBody(), createdApplication.getId());
+        List<LoanOfferDto> offers = conveyorServiceHelper.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }

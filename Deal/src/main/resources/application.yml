@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 
 logging:
   level:
@@ -33,8 +33,8 @@ feign:
 
 exception:
   message:
-    application-was-not-found: "Application wasn't found with id=%s"
+    application-not-found: "Application wasn't found with id=%s"
 
 log:
   message:
-    was-saved: "{} was saved"
+    saved: "{} was saved"

@@ -1,9 +1,9 @@
 package ru.zentsova.deal.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -12,9 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "client")
@@ -23,7 +21,7 @@ public class Client {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
@@ -62,6 +60,8 @@ public class Client {
     @Column(name = "account", length = 50)
     private String account;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "client")
     private Application application;
 

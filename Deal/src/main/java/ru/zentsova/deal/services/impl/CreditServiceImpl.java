@@ -13,11 +13,10 @@ import ru.zentsova.deal.services.CreditService;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
 public class CreditServiceImpl implements CreditService {
 
-    @Value("${log.message.was-saved}")
-    private String msgWasSaved;
+    @Value("${log.message.saved}")
+    private String msgSaved;
 
     private final CreditRepository creditRepository;
 
@@ -25,7 +24,7 @@ public class CreditServiceImpl implements CreditService {
     public Credit save(Credit credit) {
         credit.setCreditStatus(CreditStatus.CALCULATED);
         Credit createdCredit = creditRepository.save(credit);
-        log.info(msgWasSaved, createdCredit);
+        log.info(msgSaved, createdCredit);
 
         return createdCredit;
     }

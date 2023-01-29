@@ -18,11 +18,10 @@ import java.util.NoSuchElementException;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
 public class ApplicationServiceImpl implements ApplicationService {
 
-    @Value("${exception.message.application-was-not-found}")
-    private String applicationWasNotFound;
+    @Value("${exception.message.application-not-found}")
+    private String applicationNotFound;
 
     private final ApplicationRepository applicationRepository;
 
@@ -50,15 +49,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         log.info("Application id={} was updated: credit_id={}", application.getId(), credit.getId());
     }
 
+    @Transactional(readOnly = true)
     public Application findById(Long id) {
         try {
             return applicationRepository.findById(id).orElseThrow();
         } catch (NoSuchElementException ex) {
-            log.debug(String.format(applicationWasNotFound, id));
-            throw new EntityNotExistException(String.format(applicationWasNotFound, id));
+            log.debug(String.format(applicationNotFound, id));
+            throw new EntityNotExistException(String.format(applicationNotFound, id));
         }
     }
 
+    @Transactional(readOnly = true)
     public void setStatus(Application application, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
         application.setStatus(status);
         addStatusHistory(application, status, changeType);

@@ -1,9 +1,9 @@
 package ru.zentsova.deal.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name = "application")
@@ -25,14 +23,16 @@ public class Application {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name = "credit_id", referencedColumnName = "id")
     private Credit credit;

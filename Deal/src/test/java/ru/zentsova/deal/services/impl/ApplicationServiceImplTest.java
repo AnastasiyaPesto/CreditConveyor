@@ -36,7 +36,7 @@ class ApplicationServiceImplTest {
         client.setFirstName("Test");
 
         Application savedApplicationRequired = new Application();
-        savedApplicationRequired.setId(1);
+        savedApplicationRequired.setId(1L);
         savedApplicationRequired.setStatus(ApplicationStatus.PREAPPROVAL);
         ApplicationStatusHistoryDto statusHistory = new ApplicationStatusHistoryDto()
                 .status(ApplicationStatus.PREAPPROVAL.name())
@@ -60,7 +60,7 @@ class ApplicationServiceImplTest {
     @Test
     public void testUpdateApplication_setAppliedOffer() {
         Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
 
         AppliedOffer appliedOffer = new AppliedOffer();
         appliedOffer.setApplicationId(1);
@@ -77,10 +77,10 @@ class ApplicationServiceImplTest {
         LocalDateTime timeMock = LocalDateTime.now(clock);
 
         Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
 
         Credit credit = new Credit();
-        credit.setId(11);
+        credit.setId(11L);
 
         ApplicationStatusHistoryDto statusHistory = new ApplicationStatusHistoryDto()
                 .status(ApplicationStatus.APPROVED.name())
@@ -105,7 +105,7 @@ class ApplicationServiceImplTest {
     @Test
     public void testFindById_returnApplication_whenIdIsExist() {
         Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
         when(applicationRepository.findById(1L)).thenReturn(Optional.of(application));
 
         Application applicationFromDB = applicationService.findById(1L);
@@ -115,7 +115,7 @@ class ApplicationServiceImplTest {
 
     @Test
     public void testFindById_shouldExceptionThrown_whenIdIsNotExist() throws NoSuchFieldException, IllegalAccessException {
-        setField(applicationService, "applicationWasNotFound", "Application wasn't found with id=%s");
+        setField(applicationService, "applicationNotFound", "Application wasn't found with id=%s");
         when(applicationRepository.findById(1L)).thenReturn(Optional.empty());
 
 

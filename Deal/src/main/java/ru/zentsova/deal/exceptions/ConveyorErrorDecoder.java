@@ -21,7 +21,7 @@ public class ConveyorErrorDecoder implements ErrorDecoder {
             ObjectMapper mapper = new ObjectMapper();
             message = mapper.readValue(bodyIs, ApplicationError.class);
         } catch (IOException e) {
-            return new Exception(e.getMessage());
+            return new RuntimeException(e.getMessage());
         }
         if (response.status() == 400) {
             return new ConveyorException(message.getMessage() != null ? message.getMessage() : HttpStatus.BAD_REQUEST.name());

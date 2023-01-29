@@ -16,7 +16,7 @@ import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.CreditService;
-import ru.zentsova.deal.utils.ConveyorServiceUtils;
+import ru.zentsova.deal.utils.ConveyorServiceHelper;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ class DealControllerTest {
     @Mock
     private ClientService clientService;
     @Mock
-    private ConveyorServiceUtils conveyorServiceUtils;
+    private ConveyorServiceHelper conveyorServiceHelper;
     @Mock
     private ConveyorServiceClient conveyorServiceClient;
     @Mock
@@ -109,8 +109,8 @@ class DealControllerTest {
         when(clientService.save(client, passport)).thenReturn(savedClient);
         when(applicationService.createAndSaveNewApplication(savedClient)).thenReturn(createdApplication);
         when(conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto)).thenReturn(new ResponseEntity<>(offers, HttpStatus.OK));
-        doNothing().when(conveyorServiceUtils).setApplicationIdToOffers(offers, applicationId);
-        lenient().when(conveyorServiceUtils.sort(offers, Comparator.comparing(LoanOfferDto::getRate).reversed())).thenReturn(offers);
+        doNothing().when(conveyorServiceHelper).setApplicationIdToOffers(offers, applicationId);
+        lenient().when(conveyorServiceHelper.sort(offers, Comparator.comparing(LoanOfferDto::getRate).reversed())).thenReturn(offers);
 
         ResponseEntity<List<LoanOfferDto>> allPossibleOffers = controller.getAllPossibleOffers(loanApplicationRequestDto);
 
@@ -119,7 +119,7 @@ class DealControllerTest {
         verify(clientService, times(1)).save(client, passport);
         verify(applicationService, times(1)).createAndSaveNewApplication(savedClient);
         verify(conveyorServiceClient, times(1)).getAllPossibleOffers(loanApplicationRequestDto);
-        verify(conveyorServiceUtils, times(1)).setApplicationIdToOffers(offers, applicationId);
+        verify(conveyorServiceHelper, times(1)).setApplicationIdToOffers(offers, applicationId);
 
         assertEquals(HttpStatus.OK.value(), allPossibleOffers.getStatusCode().value());
     }

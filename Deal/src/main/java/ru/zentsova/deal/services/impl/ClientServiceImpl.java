@@ -13,11 +13,10 @@ import ru.zentsova.deal.services.ClientService;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
 public class ClientServiceImpl implements ClientService {
 
-    @Value("${log.message.was-saved}")
-    private String msgWasSaved;
+    @Value("${log.message.saved}")
+    private String msgSaved;
 
     private final ClientRepository clientRepository;
 
@@ -25,7 +24,7 @@ public class ClientServiceImpl implements ClientService {
     public Client save(Client client, Passport passport) {
         client.setPassportId(passport);
         Client createdClient = clientRepository.save(client);
-        log.info(msgWasSaved, createdClient);
+        log.info(msgSaved, createdClient);
 
         return createdClient;
     }

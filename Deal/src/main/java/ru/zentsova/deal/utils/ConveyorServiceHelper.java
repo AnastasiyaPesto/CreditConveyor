@@ -2,7 +2,11 @@ package ru.zentsova.deal.utils;
 
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.zentsova.deal.model.*;
+import ru.zentsova.deal.model.Application   ;
+import ru.zentsova.deal.model.Client;
+import ru.zentsova.deal.model.FinishRegistrationRequestDto;
+import ru.zentsova.deal.model.LoanOfferDto;
+import ru.zentsova.deal.model.ScoringDataDto;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
-public class ConveyorServiceUtils {
+public class ConveyorServiceHelper {
 
     public void setApplicationIdToOffers(List<LoanOfferDto> offers, long id) {
         if (offers != null)
@@ -26,7 +30,7 @@ public class ConveyorServiceUtils {
                 .collect(Collectors.toList());
     }
 
-    public void enrichScoringDataDto(ScoringDataDto scoringDataDto, FinishRegistrationRequestDto finishRegistrationRequestDto, Application application) {
+    public void populateScoringDataDto(ScoringDataDto scoringDataDto, FinishRegistrationRequestDto finishRegistrationRequestDto, Application application) {
         scoringDataDto
                 .gender(finishRegistrationRequestDto.getGender())
                 .maritalStatus(finishRegistrationRequestDto.getMaritalStatus())

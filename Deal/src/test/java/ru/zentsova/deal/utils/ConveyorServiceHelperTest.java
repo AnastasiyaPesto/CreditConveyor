@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConveyorServiceUtilsTest {
+class ConveyorServiceHelperTest {
 
-    ConveyorServiceUtils utils;
+    ConveyorServiceHelper helper;
 
     @BeforeEach
     public void init() {
-        utils = new ConveyorServiceUtils();
+        helper = new ConveyorServiceHelper();
     }
 
     @Test
@@ -33,7 +33,7 @@ class ConveyorServiceUtilsTest {
         offers.add(new LoanOfferDto().applicationId(3L));
         offers.add(new LoanOfferDto().applicationId(4L));
 
-        utils.setApplicationIdToOffers(offers, 100L);
+        helper.setApplicationIdToOffers(offers, 100L);
 
         assertNotNull(offers);
         assertEquals(4, offers.size());
@@ -46,7 +46,7 @@ class ConveyorServiceUtilsTest {
 
     @Test
     void testSort_returnEmptyList_ifOffersIsNull() {
-        assertEquals(0, utils.sort(null, Comparator.comparing(LoanOfferDto::getRate)).size());
+        assertEquals(0, helper.sort(null, Comparator.comparing(LoanOfferDto::getRate)).size());
     }
 
     @Test
@@ -57,7 +57,7 @@ class ConveyorServiceUtilsTest {
         offers.add(new LoanOfferDto().applicationId(1L));
         offers.add(new LoanOfferDto().applicationId(2L));
 
-        List<LoanOfferDto> sortedOffers = utils.sort(offers, Comparator.comparing(LoanOfferDto::getApplicationId));
+        List<LoanOfferDto> sortedOffers = helper.sort(offers, Comparator.comparing(LoanOfferDto::getApplicationId));
 
         assertEquals(4, sortedOffers.size());
         assertEquals(1L, sortedOffers.get(0).getApplicationId());
@@ -74,7 +74,7 @@ class ConveyorServiceUtilsTest {
         offers.add(new LoanOfferDto().applicationId(1L));
         offers.add(new LoanOfferDto().applicationId(2L));
 
-        List<LoanOfferDto> sortedOffers = utils.sort(offers, Comparator.comparing(LoanOfferDto::getApplicationId).reversed());
+        List<LoanOfferDto> sortedOffers = helper.sort(offers, Comparator.comparing(LoanOfferDto::getApplicationId).reversed());
 
         assertEquals(4, sortedOffers.size());
         assertEquals(4L, sortedOffers.get(0).getApplicationId());
@@ -110,7 +110,7 @@ class ConveyorServiceUtilsTest {
         when(finishDtoMock.getPassportIssueDate()).thenReturn(now);
         when(finishDtoMock.getPassportIssueBranch()).thenReturn("100-001");
 
-        utils.enrichScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
+        helper.populateScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
 
         verify(finishDtoMock, times(1)).getGender();
         verify(finishDtoMock, times(1)).getMaritalStatus();
@@ -183,7 +183,7 @@ class ConveyorServiceUtilsTest {
         when(finishDtoMock.getPassportIssueDate()).thenReturn(now);
         when(finishDtoMock.getPassportIssueBranch()).thenReturn("100-001");
 
-        utils.enrichScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
+        helper.populateScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
 
         verify(finishDtoMock, times(1)).getGender();
         verify(finishDtoMock, times(1)).getMaritalStatus();
@@ -221,7 +221,7 @@ class ConveyorServiceUtilsTest {
 
         when(clientMock.getMiddleName()).thenReturn("middleName");
 
-        utils.enrichScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
+        helper.populateScoringDataDto(scoringDataDtoSpy, finishDtoMock, applicationMock);
 
         verify(scoringDataDtoSpy, times(1)).middleName("middleName");
     }
