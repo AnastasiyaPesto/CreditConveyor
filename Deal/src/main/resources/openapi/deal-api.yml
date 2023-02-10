@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
-  title: deal conveyor
+  title: Deal microservice
   description: Final registration and full loan parameters calculation
   version: 1.0.0
   contact:
     name: Zentsova Anastasiia
     email: pestovnikovaanastasiia@gmail.com
 servers:
-  - url: http://localhost:8080/
+  - url: http://localhost:8082/
     description: Development server
 paths:
   /deal/application:
