@@ -1,7 +1,8 @@
 package ru.zentsova.application.util.validator;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.zentsova.application.config.properties.PrescoringProperties;
 import ru.zentsova.application.model.LoanApplicationRequestDto;
 import ru.zentsova.application.exceptions.ApplicationException;
 
@@ -15,6 +16,13 @@ import java.util.Objects;
  */
 @Service
 public class LoanApplicationRequestDtoValidator {
+
+    private final PrescoringProperties prescoreProps;
+
+    @Autowired
+    public LoanApplicationRequestDtoValidator(PrescoringProperties prescoreProps) {
+        this.prescoreProps = prescoreProps;
+    }
 
     /** Field names */
     private static final String S_AMOUNT = "amount";
@@ -43,21 +51,6 @@ public class LoanApplicationRequestDtoValidator {
     private static final String S_SEMICOLON = "; ";
     private static final String S_SEPARATOR = " - ";
 
-    @Value("${regex.email}")
-    private String regexEmail;
-    @Value("${regex.name}")
-    private String regexName;
-    @Value("${regex.passport.series}")
-    private String regexPassportSeries;
-    @Value("${regex.passport.number}")
-    private String regexPassportNumber;
-    @Value("${age.min}")
-    private int ageMin;
-    @Value("${term.min}")
-    private int termMin;
-    @Value("${amount.requested.min}")
-    private BigDecimal amountRequestedMin;
-
     /**
      * Validate (pre-scoring) input loan application request DTO
      * @param dto                      input loan application request dto
@@ -85,49 +78,49 @@ public class LoanApplicationRequestDtoValidator {
     }
 
     private void checkAmount(BigDecimal amount, StringBuilder errorMsg) {
-        if (checkNotNull(amount, S_AMOUNT, errorMsg) && amount.compareTo(amountRequestedMin) < 0)
-            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, amountRequestedMin.toString())).append(S_SEMICOLON);
+        if (checkNotNull(amount, S_AMOUNT, errorMsg) && amount.compareTo(prescoreProps.getAmount().getRequestedMin()) < 0)
+            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getAmount().getRequestedMin().toString())).append(S_SEMICOLON);
     }
 
     private void checkFirstName(String firstName, StringBuilder errorMsg) {
-        if (checkNotNull(firstName, S_FIRST_NAME, errorMsg) && !firstName.matches(regexName))
+        if (checkNotNull(firstName, S_FIRST_NAME, errorMsg) && !firstName.matches(prescoreProps.getRegex().getName()))
             errorMsg.append(S_FIRST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_FIRST_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
     private void checkLastName(String lastName, StringBuilder errorMsg) {
-        if (checkNotNull(lastName, S_LAST_NAME, errorMsg) && !lastName.matches(regexName))
+        if (checkNotNull(lastName, S_LAST_NAME, errorMsg) && !lastName.matches(prescoreProps.getRegex().getName()))
             errorMsg.append(S_LAST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_LAST_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
     private void checkMiddleName(String middleName, StringBuilder errorMsg, Boolean required) {
         if (required)
             checkNotNull(middleName, S_MIDDLE_NAME, errorMsg);
-        if ((middleName != null && !middleName.isBlank()) && !middleName.matches(regexName))
+        if ((middleName != null && !middleName.isBlank()) && !middleName.matches(prescoreProps.getRegex().getName()))
             errorMsg.append(S_MIDDLE_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_MIDDLE_NAME_PATTERN)).append(S_SEMICOLON);
     }
 
     private void checkTerm(Integer term, StringBuilder errorMsg) {
-        if (checkNotNull(term, S_TERM, errorMsg) && term < termMin)
-            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, termMin)).append(S_SEMICOLON);
+        if (checkNotNull(term, S_TERM, errorMsg) && term < prescoreProps.getTerm().getMin())
+            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getTerm().getMin())).append(S_SEMICOLON);
     }
 
     private void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg) {
-        if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < ageMin))
-            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN, ageMin)).append(S_SEMICOLON);
+        if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < prescoreProps.getAge().getMin()))
+            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getAge().getMin())).append(S_SEMICOLON);
     }
 
     private void checkEmail(String email, StringBuilder errorMsg) {
-        if (checkNotNull(email, S_EMAIL, errorMsg) && !email.matches(regexEmail))
+        if (checkNotNull(email, S_EMAIL, errorMsg) && !email.matches(prescoreProps.getRegex().getEmail()))
             errorMsg.append(S_EMAIL).append(S_SEPARATOR).append(S_EMAIL_PATTERN).append(S_SEMICOLON);
     }
 
     private void checkPassportSeries(String passportSeries, StringBuilder errorMsg) {
-        if (checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg) && !passportSeries.matches(regexPassportSeries))
+        if (checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg) && !passportSeries.matches(prescoreProps.getRegex().getPassport().getSeries()))
             errorMsg.append(S_PASSPORT_SERIES).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_SERIES_LENGTH)).append(S_SEMICOLON);
     }
 
     private void checkPassportNumber(String passportNumber, StringBuilder errorMsg) {
-        if (checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg) && !passportNumber.matches(regexPassportNumber))
+        if (checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg) && !passportNumber.matches(prescoreProps.getRegex().getPassport().getNumber()))
             errorMsg.append(S_PASSPORT_NUMBER).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_NUMBER_LENGTH)).append(S_SEMICOLON);
     }
 
