@@ -10,5 +10,7 @@ import java.util.List;
 @Service
 public interface DealService {
 
-    ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto);
+    ResponseEntity<List<LoanOfferDto>> executeGetAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto);
+
+    ResponseEntity<Void> executeChooseOneOffer(LoanOfferDto loanOfferDto);
 }

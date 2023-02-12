@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.zentsova.application.exceptions.ApplicationException;
+import ru.zentsova.application.exceptions.DealException;
 import ru.zentsova.application.model.ApplicationError;
 
 /**
@@ -12,6 +13,12 @@ import ru.zentsova.application.model.ApplicationError;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DealException.class)
+    public ResponseEntity<ApplicationError> handle(DealException ex) {
+        return new ResponseEntity<>(new ApplicationError().statusCode(HttpStatus.BAD_REQUEST.value()).message(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ApplicationError> handle(ApplicationException ex) {
         return new ResponseEntity<>(new ApplicationError().statusCode(HttpStatus.BAD_REQUEST.value()).message(ex.getMessage()), HttpStatus.BAD_REQUEST);

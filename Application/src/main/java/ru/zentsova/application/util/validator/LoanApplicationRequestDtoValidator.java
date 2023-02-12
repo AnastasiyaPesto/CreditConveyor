@@ -1,5 +1,6 @@
 package ru.zentsova.application.util.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.zentsova.application.config.properties.PrescoringProperties;
@@ -15,6 +16,7 @@ import java.util.Objects;
  * Validating input data (pre-scoring)
  */
 @Service
+@Slf4j
 public class LoanApplicationRequestDtoValidator {
 
     private final PrescoringProperties prescoreProps;
@@ -71,8 +73,10 @@ public class LoanApplicationRequestDtoValidator {
         checkPassportSeries(dto.getPassportSeries(), errorMsg);
         checkPassportNumber(dto.getPassportNumber(), errorMsg);
 
-        if (!errorMsg.toString().isBlank())
+        if (!errorMsg.toString().isBlank()) {
+            log.warn("Prescoring failed");
             throw new ApplicationException(errorMsg.toString());
+        }
 
         return true;
     }

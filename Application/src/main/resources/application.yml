@@ -16,7 +16,6 @@ feign:
   name: deal
   url: http://localhost:8082/deal/
 
-
 # pre-scoring properties
 prescoring:
   age:
