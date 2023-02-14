@@ -1,4 +1,4 @@
-package ru.zentsova.application.services;
+package ru.zentsova.application.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.zentsova.application.clients.deal.DealClient;
 import ru.zentsova.application.model.LoanApplicationRequestDto;
 import ru.zentsova.application.model.LoanOfferDto;
+import ru.zentsova.application.services.DealService;
 import ru.zentsova.application.util.validator.LoanApplicationRequestDtoValidator;
 
 import java.util.List;
