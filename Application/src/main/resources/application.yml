@@ -1,0 +1,28 @@
+server:
+  port: 8083
+
+logging:
+  level:
+    root: INFO
+    ru.zentsova.application: DEBUG
+    org.springframework: INFO
+    org.zalando.logbook: TRACE
+
+feign:
+  name: deal
+  url: http://localhost:8082/deal/
+
+# pre-scoring properties
+prescoring:
+  age:
+    min: 21
+  term:
+    min: 6
+  amount:
+    requested-min: 10000.00
+  regex:
+    email: ^([\w]+@[\w]+.[a-zA-Z]+)$
+    name: ([a-zA-Z]{2,30})
+    passport:
+      series: \d{4}
+      number: \d{6}

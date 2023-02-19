@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info: 
-  title: Credit conveyor
+  title: Credit conveyor microservice
   description: Calculation of possible loan terms, scoring the borrower and full calculation of loan parameters
   version: 1.0.0
   contact: 
