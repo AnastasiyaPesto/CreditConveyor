@@ -38,11 +38,11 @@ class ApplicationControllerTest {
         );
         LoanApplicationRequestDto dto = new LoanApplicationRequestDto();
 
-        Mockito.when(dealService.executeGetAllPossibleOffers(dto)).thenReturn(new ResponseEntity<>(offersExpected, HttpStatus.OK));
+        Mockito.when(dealService.getAllPossibleOffers(dto)).thenReturn(new ResponseEntity<>(offersExpected, HttpStatus.OK));
 
         ResponseEntity<List<LoanOfferDto>> response = controller.calculateAllPossibleLoanOffers(dto);
 
-        verify(dealService, times(1)).executeGetAllPossibleOffers(dto);
+        verify(dealService, times(1)).getAllPossibleOffers(dto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -55,7 +55,7 @@ class ApplicationControllerTest {
 
         controller.chooseOneOffer(dto);
 
-        verify(dealService, times(1)).executeChooseOneOffer(dto);
+        verify(dealService, times(1)).chooseOneOffer(dto);
     }
 
 }

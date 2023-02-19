@@ -42,7 +42,7 @@ class DealServiceImplTest {
         when(validator.validate(dto, true)).thenReturn(true);
         when(dealClient.getAllPossibleOffers(dto)).thenReturn(new ResponseEntity<>(offersExpected, HttpStatus.OK));
 
-        ResponseEntity<List<LoanOfferDto>> response = dealService.executeGetAllPossibleOffers(dto);
+        ResponseEntity<List<LoanOfferDto>> response = dealService.getAllPossibleOffers(dto);
 
         verify(dealClient, times(1)).getAllPossibleOffers(dto);
 
@@ -57,7 +57,7 @@ class DealServiceImplTest {
 
         when(validator.validate(dto, true)).thenReturn(false);
 
-        ResponseEntity<List<LoanOfferDto>> response = dealService.executeGetAllPossibleOffers(dto);
+        ResponseEntity<List<LoanOfferDto>> response = dealService.getAllPossibleOffers(dto);
 
         verify(dealClient, times(0)).getAllPossibleOffers(dto);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -68,7 +68,7 @@ class DealServiceImplTest {
     public void testExecuteChooseOneOffer() {
         LoanOfferDto dto = new LoanOfferDto();
 
-        dealService.executeChooseOneOffer(dto);
+        dealService.chooseOneOffer(dto);
 
         verify(dealClient, times(1)).chooseOneOffer(dto);
     }

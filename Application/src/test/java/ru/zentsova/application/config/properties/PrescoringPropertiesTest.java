@@ -2,14 +2,19 @@ package ru.zentsova.application.config.properties;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.*;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = PrescoringProperties.class)
@@ -22,7 +27,7 @@ public class PrescoringPropertiesTest {
     @Test
     public void testProperties() {
 
-        String emailRegEx = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        String emailRegEx = "^([\\w]+@[\\w]+.[a-zA-Z]+)$";
         String nameRegEx = "([a-zA-Z]{2,30})";
         String passportSeriesRegEx = "\\d{4}";
         String passportNumberRegEx = "\\d{6}";
@@ -36,4 +41,18 @@ public class PrescoringPropertiesTest {
         assertEquals(passportNumberRegEx, properties.getRegex().getPassport().getNumber());
     }
 
+    @ParameterizedTest
+    @MethodSource(value = "conditionsProvide")
+    public void testEmailRegEx(String email, boolean result) {
+        assertEquals(result, email.matches(properties.getRegex().getEmail()));
+    }
+
+    static Stream<Arguments> conditionsProvide() {
+        return Stream.of(
+            arguments("test@mail.ru", true),
+            arguments("test1123@test123.rudsfsd", true),
+            arguments("test1123@@test123.rudsfsd", false),
+            arguments("test1123@test123.ru123", false)
+        );
+    }
 }

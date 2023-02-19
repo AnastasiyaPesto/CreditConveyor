@@ -19,11 +19,11 @@ import java.util.Objects;
 @Slf4j
 public class LoanApplicationRequestDtoValidator {
 
-    private final PrescoringProperties prescoreProps;
+    private final PrescoringProperties prescoringProps;
 
     @Autowired
-    public LoanApplicationRequestDtoValidator(PrescoringProperties prescoreProps) {
-        this.prescoreProps = prescoreProps;
+    public LoanApplicationRequestDtoValidator(PrescoringProperties prescoringProps) {
+        this.prescoringProps = prescoringProps;
     }
 
     /** Field names */
@@ -38,14 +38,14 @@ public class LoanApplicationRequestDtoValidator {
     private static final String S_TERM = "term";
 
     private static final String S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN = "Age should be more or equal than %s";
-    private static final String S_EMAIL_PATTERN = "Should be like test@test.com";
+    private static final String S_EMAIL_EXAMPLE = "Should be like test@test.com";
     private static final String S_SHOULD_BE_EQUAL_OR_MORE_THAN = "Should be more or equal than %s";
     private static final String S_SHOULD_NOT_BE_EMPTY = "Should not be empty";
     private static final String S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH = "Must be more than 2 and less than 30 characters and looks like %s";
     private static final String S_PART_OF_PASSPORT_LENGTH_DIGITS = "Length must be %s digits";
-    private static final String S_FIRST_NAME_PATTERN = "Ivan";
-    private static final String S_LAST_NAME_PATTERN = "Ivanov";
-    private static final String S_MIDDLE_NAME_PATTERN = "Ivanovich";
+    private static final String S_FIRST_NAME_EXAMPLE = "Ivan";
+    private static final String S_LAST_NAME_EXAMPLE = "Ivanov";
+    private static final String S_MIDDLE_NAME_EXAMPLE = "Ivanovich";
 
     private static final int PASSPORT_SERIES_LENGTH = 4;
     private static final int PASSPORT_NUMBER_LENGTH = 6;
@@ -82,49 +82,49 @@ public class LoanApplicationRequestDtoValidator {
     }
 
     private void checkAmount(BigDecimal amount, StringBuilder errorMsg) {
-        if (checkNotNull(amount, S_AMOUNT, errorMsg) && amount.compareTo(prescoreProps.getAmount().getRequestedMin()) < 0)
-            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getAmount().getRequestedMin().toString())).append(S_SEMICOLON);
+        if (checkNotNull(amount, S_AMOUNT, errorMsg) && amount.compareTo(prescoringProps.getAmount().getRequestedMin()) < 0)
+            errorMsg.append(S_AMOUNT).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoringProps.getAmount().getRequestedMin().toString())).append(S_SEMICOLON);
     }
 
     private void checkFirstName(String firstName, StringBuilder errorMsg) {
-        if (checkNotNull(firstName, S_FIRST_NAME, errorMsg) && !firstName.matches(prescoreProps.getRegex().getName()))
-            errorMsg.append(S_FIRST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_FIRST_NAME_PATTERN)).append(S_SEMICOLON);
+        if (checkNotNull(firstName, S_FIRST_NAME, errorMsg) && !firstName.matches(prescoringProps.getRegex().getName()))
+            errorMsg.append(S_FIRST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_FIRST_NAME_EXAMPLE)).append(S_SEMICOLON);
     }
 
     private void checkLastName(String lastName, StringBuilder errorMsg) {
-        if (checkNotNull(lastName, S_LAST_NAME, errorMsg) && !lastName.matches(prescoreProps.getRegex().getName()))
-            errorMsg.append(S_LAST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_LAST_NAME_PATTERN)).append(S_SEMICOLON);
+        if (checkNotNull(lastName, S_LAST_NAME, errorMsg) && !lastName.matches(prescoringProps.getRegex().getName()))
+            errorMsg.append(S_LAST_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_LAST_NAME_EXAMPLE)).append(S_SEMICOLON);
     }
 
     private void checkMiddleName(String middleName, StringBuilder errorMsg, Boolean required) {
         if (required)
             checkNotNull(middleName, S_MIDDLE_NAME, errorMsg);
-        if ((middleName != null && !middleName.isBlank()) && !middleName.matches(prescoreProps.getRegex().getName()))
-            errorMsg.append(S_MIDDLE_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_MIDDLE_NAME_PATTERN)).append(S_SEMICOLON);
+        if ((middleName != null && !middleName.isBlank()) && !middleName.matches(prescoringProps.getRegex().getName()))
+            errorMsg.append(S_MIDDLE_NAME).append(S_SEPARATOR).append(String.format(S_PART_OF_NAME_MUST_BE_RIGHT_LENGTH, S_MIDDLE_NAME_EXAMPLE)).append(S_SEMICOLON);
     }
 
     private void checkTerm(Integer term, StringBuilder errorMsg) {
-        if (checkNotNull(term, S_TERM, errorMsg) && term < prescoreProps.getTerm().getMin())
-            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getTerm().getMin())).append(S_SEMICOLON);
+        if (checkNotNull(term, S_TERM, errorMsg) && term < prescoringProps.getTerm().getMin())
+            errorMsg.append(S_TERM).append(S_SEPARATOR).append(String.format(S_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoringProps.getTerm().getMin())).append(S_SEMICOLON);
     }
 
     private void checkBirthdate(LocalDate birthdate,StringBuilder errorMsg) {
-        if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < prescoreProps.getAge().getMin()))
-            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoreProps.getAge().getMin())).append(S_SEMICOLON);
+        if (checkNotNull(birthdate, S_BIRTH_DATE,  errorMsg) && (Period.between(birthdate, LocalDate.now()).getYears() < prescoringProps.getAge().getMin()))
+            errorMsg.append(S_BIRTH_DATE).append(S_SEPARATOR).append(String.format(S_AGE_SHOULD_BE_EQUAL_OR_MORE_THAN, prescoringProps.getAge().getMin())).append(S_SEMICOLON);
     }
 
     private void checkEmail(String email, StringBuilder errorMsg) {
-        if (checkNotNull(email, S_EMAIL, errorMsg) && !email.matches(prescoreProps.getRegex().getEmail()))
-            errorMsg.append(S_EMAIL).append(S_SEPARATOR).append(S_EMAIL_PATTERN).append(S_SEMICOLON);
+        if (checkNotNull(email, S_EMAIL, errorMsg) && !email.matches(prescoringProps.getRegex().getEmail()))
+            errorMsg.append(S_EMAIL).append(S_SEPARATOR).append(S_EMAIL_EXAMPLE).append(S_SEMICOLON);
     }
 
     private void checkPassportSeries(String passportSeries, StringBuilder errorMsg) {
-        if (checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg) && !passportSeries.matches(prescoreProps.getRegex().getPassport().getSeries()))
+        if (checkNotNull(passportSeries, S_PASSPORT_SERIES, errorMsg) && !passportSeries.matches(prescoringProps.getRegex().getPassport().getSeries()))
             errorMsg.append(S_PASSPORT_SERIES).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_SERIES_LENGTH)).append(S_SEMICOLON);
     }
 
     private void checkPassportNumber(String passportNumber, StringBuilder errorMsg) {
-        if (checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg) && !passportNumber.matches(prescoreProps.getRegex().getPassport().getNumber()))
+        if (checkNotNull(passportNumber, S_PASSPORT_NUMBER, errorMsg) && !passportNumber.matches(prescoringProps.getRegex().getPassport().getNumber()))
             errorMsg.append(S_PASSPORT_NUMBER).append(S_SEPARATOR).append(String.format(S_PART_OF_PASSPORT_LENGTH_DIGITS, PASSPORT_NUMBER_LENGTH)).append(S_SEMICOLON);
     }
 

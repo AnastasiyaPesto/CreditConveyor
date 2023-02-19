@@ -21,10 +21,10 @@ public class ApplicationController implements ApplicationApi {
     }
 
     public ResponseEntity<List<LoanOfferDto>> calculateAllPossibleLoanOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
-        return dealService.executeGetAllPossibleOffers(loanApplicationRequestDto);
+        return dealService.getAllPossibleOffers(loanApplicationRequestDto);
     }
 
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
-        return dealService.executeChooseOneOffer(loanOfferDto);
+        return dealService.chooseOneOffer(loanOfferDto);
     }
 }

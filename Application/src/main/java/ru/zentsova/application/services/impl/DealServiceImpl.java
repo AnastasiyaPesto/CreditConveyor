@@ -26,7 +26,7 @@ public class DealServiceImpl implements DealService {
         this.validator = validator;
     }
 
-    public ResponseEntity<List<LoanOfferDto>> executeGetAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
+    public ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         if (validator.validate(loanApplicationRequestDto, true)) {
             log.info("POST /deal/application to Deal microservice has been sent successfully");
             return dealClient.getAllPossibleOffers(loanApplicationRequestDto);
@@ -34,7 +34,7 @@ public class DealServiceImpl implements DealService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<Void> executeChooseOneOffer(LoanOfferDto loanOfferDto) {
+    public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
         log.info("PUT /deal/application/offer to Deal microservice has been sent successfully");
         return dealClient.chooseOneOffer(loanOfferDto);
     }

@@ -9,39 +9,39 @@ import java.math.BigDecimal;
 
 @Configuration
 @ConfigurationProperties(prefix = "prescoring")
-@Getter
 @Setter
+@Getter
 public class PrescoringProperties {
 
-    private AgeProperties age;
-    private TermProperties term;
-    private AmountProperties amount;
-    private RegExProp regex;
+    private AgeProperties age = new AgeProperties();
+    private TermProperties term = new TermProperties();
+    private AmountProperties amount = new AmountProperties();
+    private RegExProp regex = new RegExProp();
 
-    @Getter
     @Setter
+    @Getter
     public static class AgeProperties {
         private int min;
     }
 
-    @Getter
     @Setter
+    @Getter
     public static class TermProperties {
         private int min;
     }
 
-    @Getter
     @Setter
+    @Getter
     public static class AmountProperties {
         private BigDecimal requestedMin;
     }
 
-    @Getter
     @Setter
+    @Getter
     public static class RegExProp {
         private String name;
         private String email;
-        private PassportRegExProp passport;
+        private PassportRegExProp passport = new PassportRegExProp();
 
         @Setter
         @Getter
