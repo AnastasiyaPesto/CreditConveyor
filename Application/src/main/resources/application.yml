@@ -8,10 +8,6 @@ logging:
     org.springframework: INFO
     org.zalando.logbook: TRACE
 
-spring:
-  main:
-    allow-bean-definition-overriding: true
-
 feign:
   name: deal
   url: http://localhost:8082/deal/
@@ -25,7 +21,7 @@ prescoring:
   amount:
     requested-min: 10000.00
   regex:
-    email: ^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$
+    email: ^([\w]+@[\w]+.[a-zA-Z]+)$
     name: ([a-zA-Z]{2,30})
     passport:
       series: \d{4}
