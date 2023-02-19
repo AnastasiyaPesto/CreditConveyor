@@ -11,7 +11,7 @@ Implementation and README.md in the Conveyor folder.
 Implementation and README.md in the Deal folder. 
 ##### :white_check_mark: Microservice "Application". 
 Implementation and README.md in the Application folder. 
-##### :lock: Microservice "Dossier". 
+##### :lock::soon: Microservice "Dossier". 
 Choose ___feature/MS-Dossier/...___ branch. I'm working on this microservice now. 
 ##### :lock: Microservice "Auth".   
 ##### :lock: Microservice "Gateway".   
