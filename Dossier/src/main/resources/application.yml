@@ -1,0 +1,19 @@
+server:
+  port: 8084
+
+logging:
+  level:
+    root: INFO
+    ru.zentsova.deal: DEBUG
+    org.springframework: INFO
+    org.zalando.logbook: TRACE
+
+kafka:
+  topic:
+    finish-registration: finish-registration
+    create-documents: create-documents
+    send-documents: send-documents
+    send-ses: send-ses
+    credit-issued: credit-issued
+    application-denied: application-denied
+  bootstrap-servers: 127.0.0.1:9092

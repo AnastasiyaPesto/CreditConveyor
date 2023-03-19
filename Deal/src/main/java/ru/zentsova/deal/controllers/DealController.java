@@ -24,6 +24,7 @@ import ru.zentsova.deal.model.ScoringDataDto;
 import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.CreditService;
+import ru.zentsova.deal.services.KafkaProducerService;
 import ru.zentsova.deal.utils.ConveyorServiceHelper;
 
 import java.util.Comparator;
@@ -45,9 +46,12 @@ public class DealController implements DealApi {
     private final ConveyorServiceClient conveyorServiceClient;
     private final ConveyorServiceHelper conveyorServiceHelper;
 
+    private final KafkaProducerService producerService;
+
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
         applicationService.update(applicationService.findById(loanOfferDto.getApplicationId()), appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto));
+        producerService.sendFinishRegistrationEvent(loanOfferDto.getApplicationId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
