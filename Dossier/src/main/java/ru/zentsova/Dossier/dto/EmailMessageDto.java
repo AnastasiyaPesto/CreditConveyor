@@ -1,11 +1,13 @@
-package ru.zentsova.deal.dto;
+package ru.zentsova.Dossier.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
-public class EmailMessage {
+@ToString
+public class EmailMessageDto {
     private String address;
     private Theme theme;
     private Long applicationId;

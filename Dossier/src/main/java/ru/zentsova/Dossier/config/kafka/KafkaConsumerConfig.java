@@ -1,4 +1,4 @@
-package ru.zentsova.Dossier.config;
+package ru.zentsova.Dossier.config.kafka;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +10,10 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.zentsova.Dossier.config.properties.KafkaProperties;
-import ru.zentsova.Dossier.dto.EmailMessage;
+import ru.zentsova.Dossier.dto.EmailMessageDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +26,15 @@ public class KafkaConsumerConfig {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, EmailMessage> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, EmailMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, EmailMessageDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, EmailMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, EmailMessage> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), new JsonDeserializer<>(EmailMessage.class));
+    public ConsumerFactory<String, EmailMessageDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), new JsonDeserializer<>(EmailMessageDto.class));
     }
 
     private Map<String, Object> consumerConfigs() {
@@ -41,10 +42,15 @@ public class KafkaConsumerConfig {
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "deal");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "ru.zentsova.deal.model");
-        props.put(JsonDeserializer.TYPE_MAPPINGS, "*");
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+//        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+//        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "ru.zentsova.Dossier.dto.EmailMessageDto");
+//        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+//        props.put(JsonDeserializer.TYPE_MAPPINGS, "ru.zentsova.deal.model");
 
         return props;
     }

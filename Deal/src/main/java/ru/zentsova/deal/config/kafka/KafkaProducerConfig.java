@@ -1,4 +1,4 @@
-package ru.zentsova.deal.config;
+package ru.zentsova.deal.config.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import ru.zentsova.deal.config.properties.KafkaProperties;
-import ru.zentsova.deal.dto.EmailMessage;
+import ru.zentsova.deal.dto.EmailMessageDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,15 +27,15 @@ public class KafkaProducerConfig {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    KafkaTemplate<String, EmailMessage> kafkaTemplate() {
-        KafkaTemplate<String, EmailMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory());
+    KafkaTemplate<String, EmailMessageDto> kafkaTemplate() {
+        KafkaTemplate<String, EmailMessageDto> kafkaTemplate = new KafkaTemplate<>(producerFactory());
         kafkaTemplate.setProducerListener(new ProducerListener<>() {
-            public void onSuccess(ProducerRecord<String, EmailMessage> record, RecordMetadata metadata) {
+            public void onSuccess(ProducerRecord<String, EmailMessageDto> record, RecordMetadata metadata) {
                 log.info("Event is sent: {}, topic {}, partition {}, offset {}, time {}", record.value(),
                         metadata.topic(), metadata.partition(), metadata.offset(), metadata.timestamp());
             }
 
-            public void onError(ProducerRecord<String, EmailMessage> record, RecordMetadata metadata, Exception ex) {
+            public void onError(ProducerRecord<String, EmailMessageDto> record, RecordMetadata metadata, Exception ex) {
                 log.error("error producing {}", ex.getMessage());
             }
         });
@@ -43,7 +43,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, EmailMessage> producerFactory() {
+    public ProducerFactory<String, EmailMessageDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -52,7 +52,6 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(JsonSerializer.TYPE_MAPPINGS, "EmailMessage:ru.zentsova.deal.model.EmailMessage");
         return props;
     }
 }

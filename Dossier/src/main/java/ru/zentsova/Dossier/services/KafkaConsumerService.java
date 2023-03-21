@@ -1,8 +1,8 @@
 package ru.zentsova.Dossier.services;
 
-import ru.zentsova.Dossier.dto.EmailMessage;
+import ru.zentsova.Dossier.dto.EmailMessageDto;
 
 public interface KafkaConsumerService {
 
-    void sendFinishRegistrationEvent(EmailMessage msg);
+    void sendFinishRegistrationEvent(EmailMessageDto msg);
 }
