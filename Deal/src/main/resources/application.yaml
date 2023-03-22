@@ -41,7 +41,7 @@ log:
 
 kafka:
   topic:
-    finish-registration: "finish-registration"
+    finish-registration: finish-registration
     create-documents: create-documents
     send-documents: send-documents
     send-ses: send-ses
