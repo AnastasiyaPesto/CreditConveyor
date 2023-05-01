@@ -27,6 +27,9 @@ public class KafkaConsumerServiceImp implements KafkaConsumerService {
             log.info("Bad message to deserialize {}", msg);
             ex.printStackTrace();
         }
-        msgReceived.ifPresent(event -> log.info("Event <<< {}", event));
+        if (msgReceived.isPresent()) {
+            EmailMessageDto event = msgReceived.get();
+            log.info("Event <<< {}", event);
+        }
     }
 }

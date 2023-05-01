@@ -72,7 +72,8 @@ public class DealController implements DealApi {
     public ResponseEntity<List<LoanOfferDto>> getAllPossibleOffers(LoanApplicationRequestDto loanApplicationRequestDto) {
         Client client = clientMapper.loanApplicationRequestDtoToClient(loanApplicationRequestDto);
         Passport passport = passportMapper.loanApplicationRequestDtoToPassport(loanApplicationRequestDto);
-        Application createdApplication = applicationService.createAndSaveNewApplication(clientService.save(client, passport));
+        Client clientSaved = clientService.save(client, passport);
+        Application createdApplication = applicationService.createAndSaveNewApplication(clientSaved);
 
         ResponseEntity<List<LoanOfferDto>> offersResponse = conveyorServiceClient.getAllPossibleOffers(loanApplicationRequestDto);
         conveyorServiceHelper.setApplicationIdToOffers(offersResponse.getBody(), createdApplication.getId());

@@ -10,7 +10,12 @@ import org.springframework.stereotype.Service;
 import ru.zentsova.deal.config.properties.KafkaProperties;
 import ru.zentsova.deal.dto.EmailMessageDto;
 import ru.zentsova.deal.dto.Theme;
+import ru.zentsova.deal.model.Application;
+import ru.zentsova.deal.repositories.ApplicationRepository;
+import ru.zentsova.deal.repositories.ClientRepository;
 import ru.zentsova.deal.services.KafkaProducerService;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +26,11 @@ public class KafkaProducerServiceImp implements KafkaProducerService {
     private final ObjectMapper objectMapper;
     private final KafkaProperties kafkaProperties;
 
+    private final ApplicationRepository applicationRepository;
+    private final ClientRepository clientRepository;
+
     public void sendFinishRegistrationEvent(Long applicationId) {
-        EmailMessageDto msg = createEmailMsg(applicationId);
+        EmailMessageDto msg = createMessage(applicationId);
         String msgToSend = "";
         try {
             msgToSend = objectMapper.writeValueAsString(msg);
@@ -36,10 +44,11 @@ public class KafkaProducerServiceImp implements KafkaProducerService {
         log.info("Event >>> {}", msgToSend);
     }
 
-    private EmailMessageDto createEmailMsg(Long applicationId) {
+    private EmailMessageDto createMessage(Long applicationId) {
+        final Optional<Application> application = applicationRepository.findById(applicationId);
         final EmailMessageDto msg = new EmailMessageDto();
         msg.setApplicationId(applicationId);
-        msg.setAddress("test@test.ru");
+        application.ifPresent(value -> msg.setAddress(value.getClient().getEmail()));
         msg.setTheme(Theme.FINISH_REGISTRATION);
         return msg;
     }
