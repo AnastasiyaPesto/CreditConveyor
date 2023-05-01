@@ -9,6 +9,11 @@ logging:
     org.zalando.logbook: TRACE
 
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   liquibase:
     enabled: true
     change-log: db/changelog/db.changelog-master.yaml
@@ -47,4 +52,3 @@ kafka:
     send-ses: send-ses
     credit-issued: credit-issued
     application-denied: application-denied
-  bootstrap-servers: 127.0.0.1:9092

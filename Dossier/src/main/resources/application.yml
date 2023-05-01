@@ -1,5 +1,13 @@
 server:
   port: 8084
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: deal
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 logging:
   level:
@@ -16,4 +24,3 @@ kafka:
     send-ses: send-ses
     credit-issued: credit-issued
     application-denied: application-denied
-  bootstrap-servers: 127.0.0.1:9092
