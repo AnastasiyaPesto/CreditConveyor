@@ -12,7 +12,6 @@ import ru.zentsova.deal.dto.EmailMessageDto;
 import ru.zentsova.deal.dto.Theme;
 import ru.zentsova.deal.model.Application;
 import ru.zentsova.deal.repositories.ApplicationRepository;
-import ru.zentsova.deal.repositories.ClientRepository;
 import ru.zentsova.deal.services.KafkaProducerService;
 
 import java.util.Optional;
@@ -25,31 +24,44 @@ public class KafkaProducerServiceImp implements KafkaProducerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final KafkaProperties kafkaProperties;
-
     private final ApplicationRepository applicationRepository;
-    private final ClientRepository clientRepository;
 
-    public void sendFinishRegistrationEvent(Long applicationId) {
-        EmailMessageDto msg = createMessage(applicationId);
-        String msgToSend = "";
-        try {
-            msgToSend = objectMapper.writeValueAsString(msg);
-        } catch (JsonProcessingException ex) {
-            log.error("Bad message to serialize {}", msg);
-            ex.printStackTrace();
-        }
-        String topicName = kafkaProperties.getTopic().getFinishRegistration();
-        ProducerRecord<String, String> record = new ProducerRecord<>(topicName, msgToSend);
-        kafkaTemplate.send(record);
-        log.info("Event >>> {}", msgToSend);
+    public void sendCreateDocumentsEvent(Long applicationId) {
+        EmailMessageDto msg = createMessage(applicationId, Theme.CREATE_DOCUMENTS);
+        String msgToSend = convertEmailMessageDtoToString(msg);
+        sendEventToKafka(kafkaProperties.getTopic().getSendDocuments(), msgToSend);
     }
 
-    private EmailMessageDto createMessage(Long applicationId) {
+    public void sendFinishRegistrationEvent(Long applicationId) {
+        EmailMessageDto msg = createMessage(applicationId, Theme.FINISH_REGISTRATION);
+        String msgToSend = convertEmailMessageDtoToString(msg);
+        sendEventToKafka(kafkaProperties.getTopic().getFinishRegistration(), msgToSend);
+    }
+
+    private EmailMessageDto createMessage(Long applicationId, Theme theme) {
         final Optional<Application> application = applicationRepository.findById(applicationId);
         final EmailMessageDto msg = new EmailMessageDto();
         msg.setApplicationId(applicationId);
         application.ifPresent(value -> msg.setAddress(value.getClient().getEmail()));
-        msg.setTheme(Theme.FINISH_REGISTRATION);
+        msg.setTheme(theme);
+
         return msg;
+    }
+
+    private String convertEmailMessageDtoToString(EmailMessageDto dto) {
+        String msgToSend = "";
+        try {
+            msgToSend = objectMapper.writeValueAsString(dto);
+        } catch (JsonProcessingException ex) {
+            log.error("Bad message to serialize {}", dto);
+            ex.printStackTrace();
+        }
+        return msgToSend;
+    }
+
+    private void sendEventToKafka(String message, String topic) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, message);
+        kafkaTemplate.send(record);
+        log.info("Event >>> {}", message);
     }
 }

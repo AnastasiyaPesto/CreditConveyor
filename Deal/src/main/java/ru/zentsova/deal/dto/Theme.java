@@ -1,7 +1,7 @@
 package ru.zentsova.deal.dto;
 
 public enum Theme {
-    FINISH_REGISTRATION("FINISH-REGISTRATION"),
+    FINISH_REGISTRATION("Завершение регистрации"),
     CREATE_DOCUMENTS("CREATE-DOCUMENTS"),
     SEND_DOCUMENTS("SEND-DOCUMENTS"),
     SEND_SES("SEND-SES"),

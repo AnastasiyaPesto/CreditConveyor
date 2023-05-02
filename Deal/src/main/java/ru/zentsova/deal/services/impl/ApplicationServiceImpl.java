@@ -38,15 +38,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     public void update(Application application, AppliedOffer appliedOffer) {
+        setStatus(application, ApplicationStatus.APPROVED, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
         application.setAppliedOffer(appliedOffer);
-        log.info("Application id={} was updated: applied_offer_id={}", application.getId(), appliedOffer.getApplicationId());
+        log.info("Application id={} was updated: applied_offer_id={}, status={}",
+                application.getId(), appliedOffer.getApplicationId(), ApplicationStatus.APPROVED);
     }
 
     @Transactional
     public void update(Application application, Credit credit, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
         setStatus(application, status, changeType);
         application.setCredit(credit);
-        log.info("Application id={} was updated: credit_id={}", application.getId(), credit.getId());
+        log.info("Application id={} was updated: credit_id={}, status={}", application.getId(), credit.getId(), status);
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +61,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void setStatus(Application application, ApplicationStatus status, ApplicationStatusHistoryDto.ChangeTypeEnum changeType) {
         application.setStatus(status);
         addStatusHistory(application, status, changeType);

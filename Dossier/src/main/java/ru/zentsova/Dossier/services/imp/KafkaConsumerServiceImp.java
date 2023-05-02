@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.zentsova.Dossier.dto.EmailMessageDto;
+import ru.zentsova.Dossier.services.EmailService;
 import ru.zentsova.Dossier.services.KafkaConsumerService;
 
 import java.util.Optional;
@@ -17,6 +19,8 @@ import java.util.Optional;
 public class KafkaConsumerServiceImp implements KafkaConsumerService {
 
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
+    private final MailProperties mailProperties;
 
     @KafkaListener(topics = { "finish-registration" }, groupId = "deal")
     public void sendFinishRegistrationEvent(String msg) {
@@ -27,9 +31,12 @@ public class KafkaConsumerServiceImp implements KafkaConsumerService {
             log.info("Bad message to deserialize {}", msg);
             ex.printStackTrace();
         }
+
         if (msgReceived.isPresent()) {
             EmailMessageDto event = msgReceived.get();
             log.info("Event <<< {}", event);
+            emailService.sendMessage(mailProperties.getUsername(), event.getAddress(), event.getTheme().getValue(),
+                    "Ваша заявка предварительно одобрена, завершите оформление!");
         }
     }
 }

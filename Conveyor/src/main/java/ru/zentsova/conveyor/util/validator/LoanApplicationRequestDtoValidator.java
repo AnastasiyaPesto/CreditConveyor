@@ -1,5 +1,6 @@
 package ru.zentsova.conveyor.util.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.zentsova.conveyor.model.LoanApplicationRequestDto;
@@ -14,6 +15,7 @@ import java.util.Objects;
  * Validating input data (pre-scoring)
  */
 @Service
+@Slf4j
 public class LoanApplicationRequestDtoValidator {
 
     /** Field names */
@@ -78,8 +80,10 @@ public class LoanApplicationRequestDtoValidator {
         checkPassportSeries(dto.getPassportSeries(), errorMsg);
         checkPassportNumber(dto.getPassportNumber(), errorMsg);
 
-        if (!errorMsg.toString().isBlank())
+        if (!errorMsg.toString().isBlank()) {
+            log.info("Прескоринг не пройден");
             throw new ApplicationException(errorMsg.toString());
+        }
 
         return true;
     }

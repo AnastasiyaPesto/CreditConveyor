@@ -10,17 +10,7 @@ import ru.zentsova.deal.mappers.AppliedOfferMapper;
 import ru.zentsova.deal.mappers.ClientMapper;
 import ru.zentsova.deal.mappers.CreditMapper;
 import ru.zentsova.deal.mappers.PassportMapper;
-import ru.zentsova.deal.model.Application;
-import ru.zentsova.deal.model.ApplicationStatus;
-import ru.zentsova.deal.model.ApplicationStatusHistoryDto;
-import ru.zentsova.deal.model.Client;
-import ru.zentsova.deal.model.Credit;
-import ru.zentsova.deal.model.CreditDto;
-import ru.zentsova.deal.model.FinishRegistrationRequestDto;
-import ru.zentsova.deal.model.LoanApplicationRequestDto;
-import ru.zentsova.deal.model.LoanOfferDto;
-import ru.zentsova.deal.model.Passport;
-import ru.zentsova.deal.model.ScoringDataDto;
+import ru.zentsova.deal.model.*;
 import ru.zentsova.deal.services.ApplicationService;
 import ru.zentsova.deal.services.ClientService;
 import ru.zentsova.deal.services.CreditService;
@@ -50,8 +40,10 @@ public class DealController implements DealApi {
 
     @Override
     public ResponseEntity<Void> chooseOneOffer(LoanOfferDto loanOfferDto) {
-        applicationService.update(applicationService.findById(loanOfferDto.getApplicationId()), appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto));
+        Application application = applicationService.findById(loanOfferDto.getApplicationId());
+        applicationService.update(application, appliedOfferMapper.loanOfferDtoToAppliedOffer(loanOfferDto));
         producerService.sendFinishRegistrationEvent(loanOfferDto.getApplicationId());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -63,7 +55,9 @@ public class DealController implements DealApi {
 
         CreditDto creditDto = conveyorServiceClient.getFullCalculatedParameters(scoringDataDto).getBody();
         Credit createdCredit = creditService.save(creditMapper.creditDtoToCredit(creditDto));
-        applicationService.update(application, createdCredit, ApplicationStatus.APPROVED, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
+        // todo: update client???? (sequence-диаграмма)
+        applicationService.update(application, createdCredit, ApplicationStatus.CC_APPROVED, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
+        producerService.sendCreateDocumentsEvent(applicationId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

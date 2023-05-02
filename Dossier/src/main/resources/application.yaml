@@ -1,5 +1,6 @@
 server:
   port: 8084
+
 spring:
   kafka:
     consumer:
@@ -8,6 +9,17 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: loan.conveyor@yandex.ru
+    password: zblftlorgpiixtnt
+    properties:
+      mail.transport.protocol: smtp
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.starttls.enable: true
+#      mail.debug: true
 
 logging:
   level:
