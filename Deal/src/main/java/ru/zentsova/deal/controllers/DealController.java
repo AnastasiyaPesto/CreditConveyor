@@ -55,8 +55,9 @@ public class DealController implements DealApi {
 
         CreditDto creditDto = conveyorServiceClient.getFullCalculatedParameters(scoringDataDto).getBody();
         Credit createdCredit = creditService.save(creditMapper.creditDtoToCredit(creditDto));
-        // todo: update client???? (sequence-диаграмма)
         applicationService.update(application, createdCredit, ApplicationStatus.CC_APPROVED, ApplicationStatusHistoryDto.ChangeTypeEnum.AUTOMATIC);
+        clientService.update(application.getClient().getId(), finishRegistrationRequestDto);
+
         producerService.sendCreateDocumentsEvent(applicationId);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -74,5 +75,10 @@ public class DealController implements DealApi {
         List<LoanOfferDto> offers = conveyorServiceHelper.sort(offersResponse.getBody(), Comparator.comparing(LoanOfferDto::getRate).reversed());
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> requestSendDocuments(Long applicationId) {
+        return DealApi.super.requestSendDocuments(applicationId);
     }
 }

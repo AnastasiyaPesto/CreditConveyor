@@ -27,18 +27,42 @@ public class KafkaProducerServiceImp implements KafkaProducerService {
     private final ApplicationRepository applicationRepository;
 
     public void sendCreateDocumentsEvent(Long applicationId) {
-        EmailMessageDto msg = createMessage(applicationId, Theme.CREATE_DOCUMENTS);
-        String msgToSend = convertEmailMessageDtoToString(msg);
-        sendEventToKafka(kafkaProperties.getTopic().getSendDocuments(), msgToSend);
+        String msgToSend = createMessage(applicationId, Theme.CREATE_DOCUMENTS);
+        sendEventToKafka(kafkaProperties.getCreateDocumentsTopic(), msgToSend);
     }
 
     public void sendFinishRegistrationEvent(Long applicationId) {
-        EmailMessageDto msg = createMessage(applicationId, Theme.FINISH_REGISTRATION);
-        String msgToSend = convertEmailMessageDtoToString(msg);
-        sendEventToKafka(kafkaProperties.getTopic().getFinishRegistration(), msgToSend);
+        String msgToSend = createMessage(applicationId, Theme.FINISH_REGISTRATION);
+        sendEventToKafka(kafkaProperties.getFinishRegistrationTopic(), msgToSend);
     }
 
-    private EmailMessageDto createMessage(Long applicationId, Theme theme) {
+
+    @Override
+    public void sendSendDocumentsEvent(Long applicationId) {
+
+    }
+
+    @Override
+    public void sendSendSesEvent(Long applicationId) {
+
+    }
+
+    @Override
+    public void sendCreditIssuedEvent(Long applicationId) {
+
+    }
+
+    @Override
+    public void sendApplicationDeniedEvent(Long applicationId) {
+
+    }
+
+    private String createMessage(Long applicationId, Theme theme) {
+        EmailMessageDto msg = createMessageDto(applicationId, theme);
+        return convertEmailMessageDtoToString(msg);
+    }
+
+    private EmailMessageDto createMessageDto(Long applicationId, Theme theme) {
         final Optional<Application> application = applicationRepository.findById(applicationId);
         final EmailMessageDto msg = new EmailMessageDto();
         msg.setApplicationId(applicationId);
@@ -59,9 +83,10 @@ public class KafkaProducerServiceImp implements KafkaProducerService {
         return msgToSend;
     }
 
-    private void sendEventToKafka(String message, String topic) {
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, message);
+    public void sendEventToKafka(String topic, String event) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, event);
         kafkaTemplate.send(record);
-        log.info("Event >>> {}", message);
+        log.info("Event >>> {}", event);
     }
+
 }

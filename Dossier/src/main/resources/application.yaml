@@ -36,3 +36,8 @@ kafka:
     send-ses: send-ses
     credit-issued: credit-issued
     application-denied: application-denied
+
+email:
+  messages:
+    finish-registration-msg: Ваша заявка предварительно одобрена, завершите оформление!
+    create-documents-msg: <html><a href="http://localhost:8082/swagger-ui.html/">Сформировать документы</a> POST /deal/document/{applicationId}/send</html>

@@ -6,22 +6,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "kafka")
+@ConfigurationProperties(prefix = "app.kafka")
 @Getter
 @Setter
 public class KafkaProperties {
+    private String finishRegistrationTopic;
+    private String createDocumentsTopic;
+    private String sendDocumentsTopic;
+    private String sendSesTopic;
+    private String creditIssuedTopic;
+    private String applicationDeniedTopic;
 
-    private String bootstrapServers;
-    private Topic topic = new Topic();
-
-    @Getter
-    @Setter
-    public static class Topic {
-        private String finishRegistration;
-        private String createDocuments;
-        private String sendDocuments;
-        private String sendSes;
-        private String creditIssued;
-        private String applicationDenied;
-    }
 }

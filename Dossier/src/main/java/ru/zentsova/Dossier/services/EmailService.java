@@ -1,10 +1,12 @@
 package ru.zentsova.Dossier.services;
 
 import org.springframework.mail.MailMessage;
+import ru.zentsova.Dossier.model.EmailMsgTemplate;
 
 public interface EmailService {
 
-    void sendMessage(String from, String to, String subject, String body);
+    void sendSimpleMessage(EmailMsgTemplate emailMsgTemplate);
 
-    MailMessage createMessage(String from, String to, String subject, String body);
+    void sendMimeMessage(EmailMsgTemplate emailMsgTemplate, boolean html);
+
 }
