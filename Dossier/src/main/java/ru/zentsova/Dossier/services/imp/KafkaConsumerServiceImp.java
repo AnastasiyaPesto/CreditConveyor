@@ -13,6 +13,7 @@ import ru.zentsova.Dossier.dto.EmailMessageDto;
 import ru.zentsova.Dossier.model.EmailMsgTemplate;
 import ru.zentsova.Dossier.services.EmailService;
 import ru.zentsova.Dossier.services.KafkaConsumerService;
+import ru.zentsova.Dossier.utils.MessageCode;
 
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class KafkaConsumerServiceImp implements KafkaConsumerService {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
     private final MailProperties mailProperties;
+    private final MessageService messageService;
     private final EmailMessagesProperties messagesProperties;
 
      @KafkaListener(topics = { "finish-registration" }, groupId = "deal")
@@ -66,13 +68,12 @@ public class KafkaConsumerServiceImp implements KafkaConsumerService {
 
     }
 
-
     private EmailMsgTemplate createEmailMsgTemplate(EmailMessageDto messageDto) {
          return EmailMsgTemplate.builder()
                     .from(mailProperties.getUsername())
                     .to(messageDto.getAddress())
                     .subject(messageDto.getTheme().getValue())
-                    .body(messagesProperties.getFinishRegistrationMsg())
+                    .body(messageService.getMessage(MessageCode.EMAIL_MSG_FINISH_REGISTRATION))
                     .build();
     }
 

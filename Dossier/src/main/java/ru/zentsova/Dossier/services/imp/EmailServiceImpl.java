@@ -3,7 +3,6 @@ package ru.zentsova.Dossier.services.imp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
-import org.springframework.mail.MailMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,7 +12,6 @@ import ru.zentsova.Dossier.services.EmailService;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -87,10 +85,6 @@ public class EmailServiceImpl implements EmailService {
 
     private void writeLogInfo(String text, EmailMsgTemplate params) {
         log.info(text, params.getDate(), params.getFrom(), params.getTo(), params.getSubject(), params.getBody());
-    }
-
-    private Date convertLocalDateToDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     private Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
